@@ -30,12 +30,9 @@ function build(app) {
   client.on(
     "message",
     function(channel, message) {
-      console.log(channel, message);
-      data = JSON.parse(message);
-      console.log(data.channel, data.message);
-      io.sockets.in('chatty').emit(data.channel, data.message);
-      io.sockets.in('batty').emit(data.channel, data.message);
-
+      var data = JSON.parse(message);
+      console.log(data);
+      io.sockets.in(data.room).emit(data.event, data.message);
     });
 
   io.sockets.on(
@@ -46,12 +43,16 @@ function build(app) {
                 function(data) {
                   socket.join(data);
                });
+      socket.on('leave',
+                function(data) {
+                  socket.leave(data);
+               });
       socket.on(
         'clicky',
         function(data) {
-          console.log('clicky', data);
           publisher.publish("events",
-                            JSON.stringify({channel : 'events',
+                            JSON.stringify({room : 'events',
+                                            event: "click",
                                             message : "clicky-redis"}));
         });
     });

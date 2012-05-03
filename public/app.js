@@ -1,7 +1,7 @@
 var io = io.connect('/');
 
 io.on(
-  'events', 
+  'click', 
   function (data) {
     console.log(data);
     $('.logs').after('<p>' + data + '</p>');
@@ -11,8 +11,7 @@ io.on(
 io.on(
   'connect', function(socket) {
     $('.logs').after('<p>Connected</p>');
-    io.emit('join', 'chatty');
-    io.emit('join', 'batty');
+    io.emit('join', 'events');
   });
 
 $(function() {
