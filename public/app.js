@@ -10,7 +10,9 @@ io.on(
 
 io.on(
   'connect', function(socket) {
-    $('.logs').after('<p>Connected</p>');    
+    $('.logs').after('<p>Connected</p>');
+    io.emit('join', 'chatty');
+    io.emit('join', 'batty');
   });
 
 $(function() {

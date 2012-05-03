@@ -33,13 +33,19 @@ function build(app) {
       console.log(channel, message);
       data = JSON.parse(message);
       console.log(data.channel, data.message);
-      io.sockets.emit(data.channel, data.message);
+      io.sockets.in('chatty').emit(data.channel, data.message);
+      io.sockets.in('batty').emit(data.channel, data.message);
 
     });
 
   io.sockets.on(
     'connection',
     function (socket) {
+      //
+      socket.on('join',
+                function(data) {
+                  socket.join(data);
+               });
       socket.on(
         'clicky',
         function(data) {
