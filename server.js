@@ -32,6 +32,7 @@ function build(app) {
     function(channel, message) {
       console.log(channel, message);
       data = JSON.parse(message);
+      console.log(data.channel, data.message);
       io.sockets.emit(data.channel, data.message);
 
     });
@@ -39,12 +40,13 @@ function build(app) {
   io.sockets.on(
     'connection',
     function (socket) {
-      socket.join('clicky'); 
       socket.on(
         'clicky',
         function(data) {
           console.log('clicky', data);
-          publisher.publish("events", "clicky-redis");
+          publisher.publish("events",
+                            JSON.stringify({channel : 'events',
+                                            message : "clicky-redis"}));
         });
     });
   
