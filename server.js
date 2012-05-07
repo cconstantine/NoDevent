@@ -11,9 +11,17 @@ process.on('uncaughtException', function (err) {
   console.log('Caught exception: ' + err);
 });
 
-nodevent(io.of('/development'),{redis : {port :6379 ,host : 'localhost'}});
-nodevent(io.of('/staging'),    {redis : {port :6379 ,host : 'application_test'}});
-nodevent(io.of('/production'), {redis : {port :6379 ,host : 'jobs1'}});
+var config = {
+  redis : {port :6379 ,host : 'localhost'},
+  namespace: '/NoDevent'
+};
+
+if (process.argv[2]) {
+  var fs = require('fs');
+  config = JSON.parse(fs.readFileSync(process.argv[2], "utf8"));
+}
+
+nodevent(io.of(config.namespace),config);
 
 
 

@@ -7,7 +7,6 @@ function build_server(io, config) {
   client.on(
     "message",function (channel, message) {
       var data = JSON.parse(message);
-      console.log(config.namespace, data);
       io.in(data.room).emit(data.event, data.message);      
     });
   
@@ -17,7 +16,6 @@ function build_server(io, config) {
       //
       socket.on('join',
                 function(data) {
-                  console.log("join: " + data);
                   socket.join(data);
                 });
       socket.on('leave',
