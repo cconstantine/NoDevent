@@ -1,6 +1,6 @@
 var nodevent = require('./lib.js');
 
-var io = require('socket.io').listen(80);
+var io = require('socket.io')
 io.set('log level', 0);
 io.enable('browser client minification');  // send minified client
 io.enable('browser client etag');          // apply etag caching logic based on version number
@@ -22,6 +22,4 @@ if (process.argv[2]) {
 }
 
 nodevent(io.of(config.namespace),config);
-
-
-
+io.listen(config.port || 80);
