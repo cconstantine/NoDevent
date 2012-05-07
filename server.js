@@ -13,7 +13,7 @@ process.on('uncaughtException', function (err) {
 
 var config = {
   redis : {port :6379 ,host : 'localhost'},
-  namespace: '/NoDevent'
+  namespace: '/'
 };
 
 if (process.argv[2]) {
