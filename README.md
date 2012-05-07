@@ -9,10 +9,12 @@ Quick* Start (Rails)
 1) Install Node.js
 
 2) Install and start NoDevent with npm:
+
     npm install NoDevent
     npm start NoDevent
 
 3) Add the following to the gemspec
+
     gem 'nodevent'
 
 nodevent expects a $redis global to exist and be a connect to your redis server.
