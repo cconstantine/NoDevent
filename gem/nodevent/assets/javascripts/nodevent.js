@@ -40,23 +40,3 @@ function NoDevent(opts, fn) {
     });
 }
 
-var events = null;
-
-NoDevent({url : '/dev', user : {name : 'bob'}},
-         function(e) {
-           events = e;
-           events.room.on('join', function(data) {
-                            var room = data.room;
-                            var user = data.user;
-                            console.log("joining ",  room);
-                            console.log(user);
-                          });
-           
-           
-           events.join('theroom');
-           
-           events.on('theevent',
-                     function(data) {
-                       console.log(data);
-                     });
-         });
