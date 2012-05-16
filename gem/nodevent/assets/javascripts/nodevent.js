@@ -1,3 +1,5 @@
+//= require EventEmitter
+//= require socket.io/socket.io.js
 function NoDevent(opts, fn) {
   head.js(
     "/socket.io/socket.io.js", "/EventEmitter.js",

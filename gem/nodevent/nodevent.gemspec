@@ -15,5 +15,4 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = Nodevent::VERSION
 
-  gem.add_dependency "headjs-rails"
 end

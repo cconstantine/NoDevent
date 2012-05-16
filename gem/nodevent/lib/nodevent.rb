@@ -4,6 +4,11 @@ require 'json'
 
 module NoDevent
 
+  module Rails
+    class Engine < ::Rails::Engine
+    end
+  end
+
   def self.included(base)
     base.extend(NoDevent::Emitter)
   end
