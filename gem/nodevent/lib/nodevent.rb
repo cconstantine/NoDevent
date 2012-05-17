@@ -20,7 +20,27 @@ module NoDevent
   def room
     Emitter.room(self)
   end
+  module Config
+    class << self
+      def socket_io_js
+        "#{protocal}://#{host}/socket.io/socket.io.js"
+      end
+      def connect_url
+        "#{protocal}://#{host}#{namespace}"
+      end
 
+      def host
+        "localhost:80"
+      end
+
+      def protocal
+        "http"
+      end
+      def namespace
+        "/"
+      end
+    end
+  end
   module Emitter
     @@secret = nil
     class << self
