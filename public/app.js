@@ -1,17 +1,31 @@
 var events = null;
 NoDevent.ready(
-  function() {
-    events = new NoDevent("theroom", {name : 'bob'}, {namespace : '/dev'}); 
-    
-    events.room.on('join', function(data) {
-                     var room = data.room;
-                     var user = data.user;
-                     console.log("joining ",  room);
-                     console.log(user);
-                   });
-        
-    events.on('theevent',
-              function(data) {
-                $(".event").html(data);
-              });
+  {name : 'bob'}, {namespace : '/dev'},
+  function() {    
+    var theroom = NoDevent.join('theroom');
+
+    theroom.on('theevent',
+               function(data) {
+                 $(".event").html(data);
+               });
+
+    theroom.users.on(
+      'join',
+      function(user) {
+        console.log("joining ",  theroom.name, user.name);
+      });
+
+    var otherroom = NoDevent.join('otherroom');
+    otherroom.on('theevent',
+               function(data) {
+                 $(".event").html(data);
+               });
+
+    otherroom.users.on(
+      'join',
+      function(user) {
+        console.log("joining ",  otherroom.name, user.name);
+      });
+
+
   });

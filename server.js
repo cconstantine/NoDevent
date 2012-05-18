@@ -30,6 +30,7 @@ io.enable('browser client gzip');          // gzip the file
 process.on('uncaughtException', function (err) {
   console.log('Caught exception: ' + err);
 });
+
 console.log(config);
 nodevent(io.of(config.namespace),config);
 app.listen(80);
