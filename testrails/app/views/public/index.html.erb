@@ -1,4 +1,4 @@
-<%= javascript_include_tag "http://localhost:80/head.js" %>
-<%= javascript_include_tag "http://localhost:80/nodevent.js" %>
-
+<% content_for :head do %>
+  <%= javascript_include_nodevent %>
+<% end %>
 <div class="event"></div>

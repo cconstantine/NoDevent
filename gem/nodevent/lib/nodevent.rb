@@ -1,14 +1,7 @@
 require 'digest/sha2'
 require 'json'
 
-
 module NoDevent
-
-  module Rails
-    class Engine < ::Rails::Engine
-    end
-  end
-
   def self.included(base)
     base.extend(NoDevent::Emitter)
   end
@@ -20,33 +13,39 @@ module NoDevent
   def room
     Emitter.room(self)
   end
-  module Config
-    class << self
-      def socket_io_js
-        "#{protocal}://#{host}/socket.io/socket.io.js"
-      end
-      def connect_url
-        "#{protocal}://#{host}#{namespace}"
-      end
 
-      def host
-        "localhost:80"
-      end
+  module Helper
+    def javascript_include_nodevent
+      host = URI.parse(NoDevent::Emitter.config[:host])
+      namespace = URI.parse(NoDevent::Emitter.config[:namespace])
 
-      def protocal
-        "http"
-      end
-      def namespace
-        "/"
-      end
-    end
+      params = [
+                "host=#{host}",
+                "namespace=#{namespace}"
+               ].join("&")
+
+      [javascript_include_tag( "#{Emitter.config[:host]}/head.js"),
+       "<script src='#{Emitter.config[:host]}/nodevent.js?#{params}' type='text/javascript'></script>"]
+        .join.html_safe
+    end    
   end
+  ActionView::Base.send :include, Helper
+
   module Emitter
-    @@secret = nil
+    @@config = nil
     class << self
-      def secret_token= val
-          @@secret = val
+      def config= obj
+        @@config = config.merge(obj)
       end
+
+      def config
+        @@config = HashWithIndifferentAccess.new({
+                                                   :host => "http://localhost:8080",
+                                                   :namespace => ""
+                                                 }) unless @@config
+        @@config
+      end
+
       def emit(room, name, message)
         $redis.publish("events", 
                        { :room => NoDevent::Emitter.room(room),
@@ -58,7 +57,7 @@ module NoDevent
         begin
           obj = "#{obj.class}_#{obj.id}"if (obj.is_a?(ActiveRecord::Base))
         rescue; end
-        @@secret ? (Digest::SHA2.new << obj.to_s << @@secret).to_s : obj.to_s
+        @@config[:secret] ? (Digest::SHA2.new << obj.to_s << @@config[:secret]).to_s : obj.to_s
       end
     end
   end
