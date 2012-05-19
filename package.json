@@ -1,5 +1,5 @@
 {
-  "name": "NoDevent",
+  "name": "nodevent",
 
   "description": "Redis -> Browser pubsub appliance",
   "version": "0.2.0",
