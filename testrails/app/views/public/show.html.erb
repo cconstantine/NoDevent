@@ -1,0 +1,17 @@
+<% content_for :head do %>
+  <%= javascript_include_nodevent %>
+<% end %>
+
+<% content_for :js do %>
+  var user = <%= @user.to_json.html_safe %>;
+  var theroom = null;
+  NoDevent.ready(
+    user, function() {
+      var roomname = '<%= NoDevent::Emitter.room("theroom") %>';
+      onJoin(roomname, NoDevent.join(roomname));
+    });
+  updateLoc('<%= public_path %>');
+
+<% end %>
+<div class="event"></div>
+<div id="mapbox" style="width: 100%; min-height: 100%"></div>

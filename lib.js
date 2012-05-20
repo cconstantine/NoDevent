@@ -16,6 +16,22 @@ function build_server(io, config) {
     'connection',
     function (socket) {
       console.log("Connected");
+      var user_rooms = {};
+
+      socket.on(
+        'disconnect',
+        function() {
+          console.log('disconnect');
+          var room_names = Object.keys(user_rooms);
+          for(var i in room_names) {
+            var room = room_names[i];
+            console.log(room);
+            io.in(room).emit(
+              "leave_room",
+              { room :room,
+                user: JSON.parse(socket.user)});
+          }
+        });
       socket.on('join',
                 function(data) {
                   console.log("join", data);
@@ -25,6 +41,8 @@ function build_server(io, config) {
                   rooms[data.room][socket.user] = true;
 
                   socket.join(data.room);
+
+                  user_rooms[data.room] = data.user;
 
                   socket.in(data.room).emit(
                     "room_members", {room : data.room,
@@ -37,6 +55,7 @@ function build_server(io, config) {
                 });
       socket.on('leave',
                 function(data) {
+                  delete user_rooms[data.room];
                   io.in(data.room).emit("leave_room", data.room, socket.user);
                   delete rooms[data.room][socket.user];
                   if (Object.keys(rooms[data.room]).length == 0)

@@ -1,7 +1,7 @@
 PATH
   remote: ../gem/nodevent
   specs:
-    nodevent (0.1.3)
+    nodevent (0.2.0)
       redis (>= 2.0.0)
 
 GEM
