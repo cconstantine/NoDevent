@@ -10,8 +10,8 @@ Quick* Start (Rails)
 
 2) Install and start NoDevent with npm:
 
-    npm install NoDevent
-    npm start NoDevent
+    npm install nodevent
+    npm start nodevent
 
 3) Add the following to the gemspec
 
@@ -40,26 +40,19 @@ NoDevent::Emitter.emit(SomeModel.first, 'the_event', 'the_message')
 3) Connect and listen for events in the browser
 Load the socket.io layer:
 ```html
-<script src="http://YOURHOST/socket.io/socket.io.js" type="text/javascript">
+<%= javascript_include_nodevent %>
 ```
 
-Connect to a room
+Connect to a room and listen for events
 ```javascript
-var io = io.connect('http://YOURHOST/');
-$(function() {
-  io.on('connect', function(socket) {
-    io.emit('join', '<%= SomeModel.first.room %>');
-  });
-});
-```
+  NoDevent.ready(
+    {username : someuser}, function() {
+      var theroom = NoDevent.join('someroom');
+      theroom.on("the_event",function(data){
+        /* Do stuff with data */
+      });
+    });
 
-Listen for events
-```javascript
-$(function(){
-  io.on("the_event",function(data){
-    /* Do stuff with data */
-  });
-})
 ```
 
 Thats it!
