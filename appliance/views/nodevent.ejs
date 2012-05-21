@@ -1,6 +1,6 @@
 var NoDevent = {};
 
-function onReady(opts, fn) {
+function onReady(user, opts, fn) {
   if (NoDevent.connected) {
     fn();
     return;
@@ -26,12 +26,13 @@ function onReady(opts, fn) {
   };
   
   NoDevent.join = function(room) {
-    s.emit('join', {user : opts.user, room : room});
+    console.log(user);
+    s.emit('join', {user : user, room : room});
     return NoDevent.room(room);
   };
   
   NoDevent.leave = function(room) {
-    s.emit('leave', {user : opts.user, room : room});
+    s.emit('leave', {user : user, room : room});
   }; 
   s.on(
     'event', 
@@ -72,7 +73,7 @@ NoDevent.ready = function(user, fn) {
   var event_emitter_url = opts.host + "/EventEmitter.js";
   head.js(     
     socket_io_url, event_emitter_url,
-    function() {onReady(opts, fn);});
+    function() {onReady(user, opts, fn);});
 };
 
 

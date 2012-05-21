@@ -36,10 +36,11 @@ io.enable('browser client minification');  // send minified client
 io.enable('browser client etag');          // apply etag caching logic based on version number
 io.enable('browser client gzip');          // gzip the file
 
-
+/*
 process.on('uncaughtException', function (err) {
   console.log('Caught exception: ' + err);
 });
+*/
 
 console.log(config);
 nodevent(io.of(config.namespace),config);
