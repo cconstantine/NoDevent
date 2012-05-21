@@ -26,7 +26,6 @@ function onReady(user, opts, fn) {
   };
   
   NoDevent.join = function(room) {
-    console.log(user);
     s.emit('join', {user : user, room : room});
     return NoDevent.room(room);
   };
