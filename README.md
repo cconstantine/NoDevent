@@ -4,6 +4,8 @@ A bridge for posting server events to a redis pubsub and having it go out to bro
 
 This is useful for notifying browser js clients about events happening on the server such as private messages, new discussion posts, or interesting resque jobs.
 
+See a demo at http://nodevent.com
+
 Quick* Start (Rails)
 -----------
 1) Install Node.js
