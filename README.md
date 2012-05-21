@@ -59,6 +59,10 @@ Thats it!
 
 *Ok, so it's not that quick.
 
-More Detail
------
-To finish later
+Use Cases
+=======
+- A 'realtime' chat server
+- Showing online users
+- Notify browsers when a resque job is done
+
+
