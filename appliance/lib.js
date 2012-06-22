@@ -8,24 +8,21 @@ function build_server(io, config) {
   client.on(
     "message",function (channel, message) {
       var data = JSON.parse(message);
-      console.log(data);
+      console.log(message);
       io.in(data.room).emit("event", data);      
     });
   
   io.on(
     'connection',
     function (socket) {
-      console.log("Connected");
       var user_rooms = {};
 
       socket.on(
         'disconnect',
         function() {
-          console.log('disconnect');
           var room_names = Object.keys(user_rooms);
           for(var i in room_names) {
             var room = room_names[i];
-            console.log(room);
             io.in(room).emit(
               "leave_room",
               { room :room,
@@ -34,7 +31,6 @@ function build_server(io, config) {
         });
       socket.on('join',
                 function(data) {
-                  console.log("join", data);
                   socket.user = JSON.stringify(data.user);
                   if (!rooms[data.room])
                     rooms[data.room] = {};
