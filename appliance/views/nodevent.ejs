@@ -1,4 +1,4 @@
-var NoDevent = new EventEmitter();
+var NoDevent = {};
 
 function onReady(user, opts, fn) {
   if (NoDevent.connected) {
@@ -33,12 +33,8 @@ function onReady(user, opts, fn) {
   NoDevent.leave = function(room) {
     s.emit('leave', {user : user, room : room});
   }; 
-  
-  s.on(
-    'disconnect',
-    function() {
-      NoDevent.emit('disconnect');
-    });
+
+  NoDevent.socket = s;
 
   s.on(
     'event', 
