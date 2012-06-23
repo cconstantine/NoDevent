@@ -26,7 +26,6 @@ function onReady(opts, fn) {
   
   var join_callbacks = { };
   NoDevent.join = function(room, fn) {
-    s.emit('join', {room : room});
     if (!join_callbacks[room]) {
       join_callbacks[room] = [fn];
     } else {
@@ -39,18 +38,19 @@ function onReady(opts, fn) {
         join_callbacks[room].push(fn);
       }
     }
-    fn(NoDevent.room(room));
+    s.emit('join', {room : room}, function(r){fn(NoDevent.room(r));});
   };
   
-  NoDevent.leave = function(room) {
+  NoDevent.leave = function(room, fn) {
     join_callbacks[room] = [];
-    s.emit('leave', {room : room});
+    s.emit('leave', {room : room}, function(r){fn(NoDevent.room(r));});
   }; 
 
   NoDevent.socket = s;
 
-  s.on('connect', function() {
+  s.on('connect', function(socket) {
          for (room in join_callbacks) {
+           s.emit('join', {room : room});
            for(var i in join_callbacks[room]) {
              var callback = join_callbacks[room][i];
              callback(NoDevent.room(room));
