@@ -1,6 +1,6 @@
 var NoDevent = {};
 
-function onReady(user, opts, fn) {
+function onReady(opts, fn) {
   if (NoDevent.connected) {
     fn();
     return;
@@ -9,7 +9,6 @@ function onReady(user, opts, fn) {
   function Room(name) {
     var m = new EventEmitter();
     m.name = name;
-    m.users = new EventEmitter();
     return m;
   }
 
@@ -25,17 +24,39 @@ function onReady(user, opts, fn) {
     return r;
   };
   
-  NoDevent.join = function(room) {
-    s.emit('join', {user : user, room : room});
-    return NoDevent.room(room);
+  var join_callbacks = { };
+  NoDevent.join = function(room, fn) {
+    s.emit('join', {room : room});
+    if (!join_callbacks[room]) {
+      join_callbacks[room] = [fn];
+    } else {
+      var found = false;
+      for(var i in join_callbacks[room]) {
+        var callback = join_callbacks[room][i];
+        found = found || (callback == fn);
+      }
+      if (!found) {
+        join_callbacks[room].push(fn);
+      }
+    }
+    fn(NoDevent.room(room));
   };
   
   NoDevent.leave = function(room) {
-    s.emit('leave', {user : user, room : room});
+    join_callbacks[room] = [];
+    s.emit('leave', {room : room});
   }; 
 
   NoDevent.socket = s;
 
+  s.on('connect', function() {
+         for (room in join_callbacks) {
+           for(var i in join_callbacks[room]) {
+             var callback = join_callbacks[room][i];
+             callback(NoDevent.room(room));
+           }
+         }
+       });
   s.on(
     'event', 
     function (data) {
@@ -45,37 +66,19 @@ function onReady(user, opts, fn) {
       
       NoDevent.room(room).emit(event, message);
     });
-  
-  s.on(
-    'join_room', 
-    function (data) {
-      NoDevent.room(data.room).users.emit('join', data.user);
-    });
-  
-  s.on(
-    'leave_room', 
-    function (data) {
-      NoDevent.room(data.room).users.emit('leave', data.user);
-    });
-    
-  s.on(
-    'room_members',
-    function(data) {
-      NoDevent.room(data.room).users.emit('members', data.members);
-    });
-
+      
   NoDevent.connected = true;
   fn();
 }
 
-NoDevent.ready = function(user, fn) {
+NoDevent.ready = function(fn) {
   var opts = <%- JSON.stringify(opts) %>;
 
   var socket_io_url = opts.host + "/socket.io/socket.io.js";
   var event_emitter_url = opts.host + "/EventEmitter.js";
   head.js(     
     socket_io_url, event_emitter_url,
-    function() {onReady(user, opts, fn);});
+    function() {onReady(opts, fn);});
 };
 
 
