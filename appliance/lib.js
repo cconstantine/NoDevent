@@ -2,6 +2,7 @@ var redis = require("redis");
 
 function build_server(io, config) {
   var rooms = {};
+
   var client = redis.createClient(config.redis.port, config.redis.host, config.redis.options);
   
   client.subscribe(config.redis.subscribe || 'events');
@@ -20,13 +21,13 @@ function build_server(io, config) {
 
                   socket.join(data.room);
                   if (fn)
-                    fn(data.room);
+                    fn(true);
                 });
       socket.on('leave',
                 function(data, fn) {
                   socket.leave(data);
                   if (fn)
-                    fn(data.room);
+                    fn(true);
                 });
     });
   return io;

@@ -1,84 +1,18 @@
-var NoDevent = {};
-
-function onReady(opts, fn) {
-  if (NoDevent.connected) {
-    fn();
-    return;
-  }
-  
-  function Room(name) {
-    var m = new EventEmitter();
-    m.name = name;
-    return m;
-  }
-
-  var connect_url = opts.host + (opts.namespace || "");
-  var s = io.connect(connect_url );
-  var rooms = {};
-  
-  NoDevent.room = function(name) {
-    var r = rooms[name];
-    if (!r) {
-      r = rooms[name] = new Room(name);
-    }
-    return r;
-  };
-  
-  var join_callbacks = { };
-  NoDevent.join = function(room, fn) {
-    if (!join_callbacks[room]) {
-      join_callbacks[room] = [fn];
-    } else {
-      var found = false;
-      for(var i in join_callbacks[room]) {
-        var callback = join_callbacks[room][i];
-        found = found || (callback == fn);
-      }
-      if (!found) {
-        join_callbacks[room].push(fn);
-      }
-    }
-    s.emit('join', {room : room}, function(r){fn(NoDevent.room(r));});
-  };
-  
-  NoDevent.leave = function(room, fn) {
-    join_callbacks[room] = [];
-    s.emit('leave', {room : room}, function(r){fn(NoDevent.room(r));});
-  }; 
-
-  NoDevent.socket = s;
-
-  s.on('connect', function(socket) {
-         for (room in join_callbacks) {
-           s.emit('join', {room : room});
-           for(var i in join_callbacks[room]) {
-             var callback = join_callbacks[room][i];
-             callback(NoDevent.room(room));
-           }
-         }
-       });
-  s.on(
-    'event', 
-    function (data) {
-      var event = data.event;
-      var room = data.room;
-      var message = data.message;
-      
-      NoDevent.room(room).emit(event, message);
-    });
-      
-  NoDevent.connected = true;
-  fn();
-}
+<%- 
+  deps
+%>
 
 NoDevent.ready = function(fn) {
-  var opts = <%- JSON.stringify(opts) %>;
-
-  var socket_io_url = opts.host + "/socket.io/socket.io.js";
-  var event_emitter_url = opts.host + "/EventEmitter.js";
+  if(NoDevent.is_ready) {
+    return fn();
+  }
   head.js(     
-    socket_io_url, event_emitter_url,
-    function() {onReady(opts, fn);});
+    "<%- opts.host + "/socket.io/socket.io.js" %>",
+    function() {
+      var connect_url = "<%- opts.host + "/" + opts.namespace %>";
+      NoDevent.socket = io.connect(connect_url );
+      NoDevent._ready(fn);
+    });
 };
 
 

@@ -1,6 +1,6 @@
 {
-  "subscribe" : "events",
-  "port" : 80,
-  "redis" : {"port" :6379 ,"host" : "localhost"},
-  "namespace": "/"
+  "port" : 8080,
+  "/default" : { 
+    "redis" : {"port" :6379 ,"host" : "localhost", "subscribe" : "events"}
+  }
 }
