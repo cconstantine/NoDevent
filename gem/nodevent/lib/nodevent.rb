@@ -19,7 +19,12 @@ module NoDevent
       host = URI.parse(NoDevent::Emitter.config[:host])
       namespace = URI.parse(NoDevent::Emitter.config[:namespace])
 
-      javascript_include_tag("<script src='#{Emitter.config[:host]}/api/#{namespace}' type='text/javascript'></script>").html_safe
+      params = [
+                "host=#{host}",
+                "namespace=#{namespace}"
+               ].join("&")
+
+      "<script src='#{Emitter.config[:host]}/api/#{namespace}' type='text/javascript'></script>".html_safe
     end    
   end
   ActionView::Base.send :include, Helper
