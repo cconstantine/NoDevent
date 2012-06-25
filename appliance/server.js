@@ -10,7 +10,7 @@ process.on('uncaughtException', function (err) {
 });
 
 var config = {
-  "/default" : {
+  "/nodevent" : {
     redis : {port :6379 ,host : 'localhost'}
   }
 };
