@@ -18,7 +18,6 @@ function build_server(io, config) {
     function (socket) {
       socket.on('join',
                 function(data, fn) {
-
                   socket.join(data.room);
                   if (fn)
                     fn(true);

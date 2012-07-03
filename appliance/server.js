@@ -62,7 +62,9 @@ io.enable('browser client gzip');          // gzip the file
 
 
 console.log(config);
-for(var namespace in config) {  
-  nodevent(io.of(namespace),config[namespace]);
+for(var namespace in config) {
+  console.log(namespace);  
+  var ns = io.of(namespace);
+  nodevent(ns,config[namespace]);
 }
 app.listen(8080);
