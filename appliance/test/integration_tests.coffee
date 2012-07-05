@@ -1,43 +1,15 @@
 NoDeventController = require('../assets/js/nodevent.coffee').NoDeventController
 Emitter            = require("../emitter.coffee")
 io                 = require('socket.io-client');
+Server             = require('./server.coffee').Server
 
 emitter = new Emitter({redis: {}});
 
+#process.on 'uncaughtException', (err) ->
+#  console.log('Caught exception: ' + err);
+
 websocket = () ->
-  ws = io.connect('http://localhost:8080/nodevent', {'force new connection': true})
-  return ws
-
-class Server
-  constructor: () ->
-    @spawn = require('child_process').fork
-    process.on 'SIGINT', ->
-      server.stop()
-
-    process.on 'exit', ->
-      server.stop()
-
-  start: (fn)->
-    if @child?
-      fn()
-    else
-      @child = @spawn('server.js')
-      @child.once 'message', (m) =>
-        if m == 'ready'
-          fn()
-      @child.once 'exit', =>
-        @child = null;
-
-
-  stop: (fn) ->
-    if !@child?
-      fn() if fn?
-      return
-
-    @child.once 'exit', ->
-      fn() if fn?
-    @child.kill('SIGTERM')
-
+  io.connect('http://localhost:8080/nodevent', {'force new connection': true})
 
 server = new Server
 spawn = require('child_process').spawn
