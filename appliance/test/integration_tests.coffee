@@ -14,7 +14,7 @@ websocket = () ->
 server = new Server
 spawn = require('child_process').spawn
 
-describe 'self testing', ->
+describe 'ServerProcess', ->
   it "causes disconnects", (done)->
     server.start ->
       ws = websocket()

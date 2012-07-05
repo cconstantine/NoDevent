@@ -47,14 +47,7 @@ class this.NoDeventController extends EventEmitter
     if !@join_callbacks[room]
       @join_callbacks[room] = [fn];
     else
-
-      found = false;
-      for i in @join_callbacks[room]
-        callback = join_callbacks[room][i];
-        found = found || (callback == fn);
-
-      if !found
-        @join_callbacks[room].push(fn);
+      @join_callbacks[room].push(fn);
 
     if @socket?
       @socket.emit 'join', {room : room}, fn
