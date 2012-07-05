@@ -12,6 +12,15 @@ class this.NoDeventController extends EventEmitter
     @join_callbacks = { }
     @connected = false
 
+  down: () ->
+    if @socket?
+      @socket.removeAllListeners()
+
+    for room,obj of @rooms
+      obj.removeAllListeners()
+    @removeAllListeners()
+
+
   setSocket: (socket) ->
     @socket = socket
     socket.on 'connect', () =>

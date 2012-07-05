@@ -1,38 +1,88 @@
 NoDeventController = require('../assets/js/nodevent.coffee').NoDeventController
 Emitter            = require("../emitter.coffee")
 io                 = require('socket.io-client');
-app                = require('../server.js')
 
 emitter = new Emitter({redis: {}});
 
-describe 'NoDevent', ->
-  before (done)->
-    app.listen(9876, done)
+websocket = () ->
+  ws = io.connect('http://localhost:8080/nodevent', {'force new connection': true})
+  return ws
 
+class Server
+  constructor: () ->
+    @spawn = require('child_process').fork
+    process.on 'SIGINT', ->
+      server.stop()
+
+    process.on 'exit', ->
+      server.stop()
+
+  start: (fn)->
+    if @child?
+      fn()
+    else
+      @child = @spawn('server.js')
+      @child.once 'message', (m) =>
+        if m == 'ready'
+          fn()
+      @child.once 'exit', =>
+        @child = null;
+
+
+  stop: (fn) ->
+    if !@child?
+      fn() if fn?
+      return
+
+    @child.once 'exit', ->
+      fn() if fn?
+    @child.kill('SIGTERM')
+
+
+server = new Server
+spawn = require('child_process').spawn
+
+describe 'self testing', ->
+  it "causes disconnects", (done)->
+    server.start ->
+      ws = websocket()
+      ws.on 'disconnect', ->
+        done()
+      ws.on 'connect', ->
+        server.stop()
+
+describe 'NoDevent', ->
   beforeEach ()->
-    this.NoDevent = new NoDeventController
+    @NoDevent = new NoDeventController
+
+  afterEach ()->
+    @NoDevent.down()
+    @NoDevent.removeAllListeners()
 
   describe "#on", ->
     it "should notify on connect", (done) ->
-      this.socket = io.connect('http://localhost:9876/nodevent')
-      this.NoDevent.on 'connect', done
-      this.NoDevent.setSocket(this.socket)
+      server.start =>
+        @NoDevent.on 'connect', ->
+          server.stop(done)
+        @NoDevent.setSocket(websocket())
 
   describe 'with a connection', ->
-    beforeEach ()->
-      this.socket = io.connect('http://localhost:9876/nodevent')
-      this.NoDevent.setSocket(this.socket)
+    before (done)->
+      server.start done
+    after (done)->
+      server.stop(done)
 
+    beforeEach (done)->
+      @NoDevent.setSocket(websocket())
+      @NoDevent.on 'connect', done
 
     describe '#join()', ->
       it 'should allow us to join a room', (done)->
-        this.NoDevent.join 'theroom', done
+        @NoDevent.join 'theroom', done
 
       it 'should receive messages after joining', (done)->
         room = this.NoDevent.join 'theroom'
         room.once 'theevent', (data) ->
           data.should.equal('thedata')
           done()
-
         emitter.emit('theroom', 'theevent', 'thedata')
-

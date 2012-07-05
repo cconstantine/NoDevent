@@ -7,16 +7,17 @@ require('ejs');
 
 
 var config = {
+  port: 8080, 
   "/nodevent" : {
     redis : {port :6379 ,host : 'localhost'}
   }
 };
-/*
+
 if (process.argv[2]) {
   var fs = require('fs');
   config = JSON.parse(fs.readFileSync(process.argv[2], "utf8"));
 }
-*/
+
 
 var app = module.exports = express.createServer();
 app.set('view engine', 'ejs');
@@ -42,7 +43,9 @@ app.get('/api/:namespace', function(req, res){
             "https://" : "http://" +
             req.headers.host;
 
-          snocket.getConcatenation('assets/js/nodevent_asset.coffee', {minify: false}, function(err, js) {
+          snocket.getConcatenation('assets/js/nodevent_asset.coffee',
+                                   {minify: false},
+                                   function(err, js) {
                                      if (err)
                                        throw err;
                                      res.render('nodevent.ejs', { deps : js,
@@ -52,16 +55,17 @@ app.get('/api/:namespace', function(req, res){
                                    });
         });
 
-var io = require('socket.io').listen(app);
-io.set('log level', 0);
+var io = require('socket.io').listen(app, {'log level' : 0});
 io.enable('browser client minification');  // send minified client
 io.enable('browser client etag');          // apply etag caching logic based on version number
 io.enable('browser client gzip');          // gzip the file
 
 
 for(var namespace in config) {
-  var ns = io.of(namespace);
-  nodevent(ns,config[namespace]);
+  if (namespace[0] == '/') {
+    var ns = io.of(namespace);
+    nodevent(ns,config[namespace]);
+  }
 }
 
 // Are we running as a server?
@@ -69,5 +73,6 @@ if (!module.parent) {
   process.on('uncaughtException', function (err) {
                console.log('Caught exception: ' + err);
              });
-  app.listen(8080);
+  app.listen(config.port);
+  process.send("ready");
 }
