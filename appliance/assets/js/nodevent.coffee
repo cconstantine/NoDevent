@@ -1,28 +1,27 @@
-#= require head
-#= require eventemitter
+`if (typeof EventEmitter == 'undefined'){ EventEmitter = require('events').EventEmitter }`
 
 class Room extends EventEmitter
   constructor: (@id) ->
     super
   id: @id
 
-class NoDevent
+class this.NoDeventController extends EventEmitter
   constructor: () ->
+    super()
     @rooms = {};
     @join_callbacks = { }
-    @control = new EventEmitter
+    @connected = false
 
   setSocket: (socket) ->
     @socket = socket
-
     socket.on 'connect', () =>
       for room,callbacks of @join_callbacks
-        @socket.emit 'join', {room : room}, (success) ->
+        @socket.emit 'join', {room : room}, (err) ->
           for callback in callbacks
-            callback(success);
+            callback(err);
 
     @socket.on 'connect', =>
-      @control.emit('connect')
+      @.emit('connect')
 
     @socket.on 'event', (data) =>
       @room(data.room).emit(data.event, data.message);
@@ -48,9 +47,8 @@ class NoDevent
       if !found
         @join_callbacks[room].push(fn);
 
-    if @socket
-      @socket.emit 'join', {room : room}, (success)->
-        fn(success)
+    if @socket?
+      @socket.emit 'join', {room : room}, fn
 
     return @room(room);
 
@@ -60,5 +58,3 @@ class NoDevent
     if @socket
       @socket.emit 'leave', {room : room}, (success) ->
         fn(success);
-
-window.NoDevent = new NoDevent()

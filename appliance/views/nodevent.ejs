@@ -7,7 +7,6 @@ head.js(
   function() {
       var connect_url = "<%- opts.host + "/" + opts.namespace %>";
       var socket = io.connect(connect_url );
-      socket.on("connect", function(){console.log('CONNECT')});
       NoDevent.setSocket( socket);
   });
 

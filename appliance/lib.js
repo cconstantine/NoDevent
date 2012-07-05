@@ -9,7 +9,6 @@ function build_server(io, config) {
   client.on(
     "message",function (channel, message) {
       var data = JSON.parse(message);
-      console.log(message);
       io.in(data.room).emit("event", data);      
     });
   
@@ -20,13 +19,13 @@ function build_server(io, config) {
                 function(data, fn) {
                   socket.join(data.room);
                   if (fn)
-                    fn(true);
+                    fn(null);
                 });
       socket.on('leave',
                 function(data, fn) {
                   socket.leave(data);
                   if (fn)
-                    fn(true);
+                    fn(null);
                 });
     });
   return io;

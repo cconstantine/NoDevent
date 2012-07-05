@@ -1,9 +1,9 @@
 
-NoDevent.control.on 'connect', ->
+NoDevent.on 'connect', ->
   console.log('nodevent connected')
 
-room = NoDevent.join 'theroom', (success) ->
-  if success
+room = NoDevent.join 'theroom', (err) ->
+  if !err?
     console.log('joined: theroom')
 
 room.on 'ping', (data) ->
@@ -11,11 +11,4 @@ room.on 'ping', (data) ->
 
 room.on 'ping', (data) ->
   console.log "2: " + data
-
-
-window.onReady = ->
-  console.log 'onReady'
-  socket = io.connect('http://localhost:8080/nodevent')
-  socket.on 'connect', ->
-    console.log 'socket connect'
 
