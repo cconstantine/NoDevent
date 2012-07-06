@@ -9,7 +9,7 @@ emitter = new Emitter({redis: {}});
 #  console.log('Caught exception: ' + err);
 
 websocket = () ->
-  io.connect('http://localhost:8080/nodevent', {'force new connection': true})
+  io.connect('http://localhost:9876/nodevent', {'force new connection': true})
 
 server = new Server
 spawn = require('child_process').spawn
@@ -17,10 +17,13 @@ spawn = require('child_process').spawn
 describe 'ServerProcess', ->
   it "causes disconnects", (done)->
     server.start ->
+      console.log 'start'
       ws = websocket()
       ws.on 'disconnect', ->
+        console.log 'disconnect'
         done()
       ws.on 'connect', ->
+        console.log 'connect'
         server.stop()
 
 describe 'NoDevent', ->

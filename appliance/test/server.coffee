@@ -11,7 +11,7 @@ class this.Server
     if @child?
       fn()
     else
-      @child = @spawn('server.js')
+      @child = @spawn('server.js', ['./test/config.json'])
       @child.once 'message', (m) =>
         if m == 'ready'
           fn()

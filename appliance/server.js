@@ -73,6 +73,9 @@ if (!module.parent) {
   process.on('uncaughtException', function (err) {
                console.log('Caught exception: ' + err);
              });
+
+  console.log(config.port);
   app.listen(config.port);
-  process.send("ready");
+  if (process.send)
+    process.send("ready");
 }
