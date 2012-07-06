@@ -74,7 +74,6 @@ if (!module.parent) {
                console.log('Caught exception: ' + err);
              });
 
-  console.log(config.port);
   app.listen(config.port);
   if (process.send)
     process.send("ready");
