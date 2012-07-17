@@ -17,13 +17,10 @@ spawn = require('child_process').spawn
 describe 'ServerProcess', ->
   it "causes disconnects", (done)->
     server.start ->
-      console.log 'start'
       ws = websocket()
       ws.on 'disconnect', ->
-        console.log 'disconnect'
         done()
       ws.on 'connect', ->
-        console.log 'connect'
         server.stop()
 
 describe 'NoDevent', ->

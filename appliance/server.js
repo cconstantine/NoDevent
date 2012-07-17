@@ -13,13 +13,26 @@ var config = {
   }
 };
 
+var fs = require('fs');
 if (process.argv[2]) {
-  var fs = require('fs');
   config = JSON.parse(fs.readFileSync(process.argv[2], "utf8"));
+} else if ( fs.existsSync('/etc/nodevent.json')) {
+  config = JSON.parse(fs.readFileSync('/etc/nodevent.json', "utf8"));
 }
 
+var app = null;
 
-var app = module.exports = express.createServer();
+if (config.ssl) 
+    app = express.createServer(
+	{
+	    key: fs.readFileSync(config.ssl.key).toString(),
+	    cert:fs.readFileSync(config.ssl.cert).toString(),
+	});
+else
+    app = express.createServer();
+    
+module.exports = app;
+
 app.set('view engine', 'ejs');
 app.configure(function () {
                 app.use(express.static(__dirname + '/public'));
@@ -74,7 +87,6 @@ if (!module.parent) {
                console.log('Caught exception: ' + err);
              });
 
-  console.log(config.port);
   app.listen(config.port);
   if (process.send)
     process.send("ready");
