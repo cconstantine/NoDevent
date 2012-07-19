@@ -38,7 +38,9 @@ class this.NoDeventController extends EventEmitter
   room: (name) ->
     @rooms[name] ?= new Room(name);
 
-  join: (room, fn) ->
+  join: (room, opts...) ->
+    fn = opts.pop()
+    key = opts[0]
     # Put in a placeholder function if not given one
     if !fn
       fn = (success) ->
@@ -50,7 +52,9 @@ class this.NoDeventController extends EventEmitter
       @join_callbacks[room].push(fn);
 
     if @socket?
-      @socket.emit 'join', {room : room}, fn
+      arg = {room : room}
+      arg.key = key if key?
+      @socket.emit 'join', arg, fn
 
     return @room(room);
 

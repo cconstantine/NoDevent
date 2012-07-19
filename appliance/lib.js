@@ -1,10 +1,13 @@
+require('coffee-script')
 var redis = require("redis");
+var Auth = require("./auth.coffee").Auth
 
 function build_server(io, config) {
   var rooms = {};
-
+  var secret = config.secret;
   var client = redis.createClient(config.redis.port, config.redis.host, config.redis.options);
-  
+  var auther = new Auth(secret)
+
   client.subscribe(config.redis.subscribe || 'events');
   client.on(
     "message",function (channel, message) {
@@ -17,9 +20,12 @@ function build_server(io, config) {
     function (socket) {
       socket.on('join',
                 function(data, fn) {
-                  socket.join(data.room);
-                  if (fn)
-                    fn(null);
+                  auther.check(data.room, data.key, function(err, res) {
+			              if (res) {
+                      socket.join(data.room);
+                    }
+			              fn(err, res);
+                  });
                 });
       socket.on('leave',
                 function(data, fn) {
@@ -27,8 +33,8 @@ function build_server(io, config) {
                   if (fn)
                     fn(null);
                 });
-    });
-  return io;
-}
+               });
+    return io;
+  }
 
-module.exports = build_server;
+  module.exports = build_server;
