@@ -1,17 +1,52 @@
 `if (typeof EventEmitter == 'undefined'){ EventEmitter = require('events').EventEmitter }`
 
 class Room extends EventEmitter
-  constructor: (@id) ->
+  constructor: (@id, @controller) ->
     super
+    @join_callbacks = []
+
+    @inRoom = false
+    @controller.on 'connect', =>
+      if @inRoom
+        @_doJoin()
+              
   id: @id
 
+  getKey: () ->
+    @key
+
+  setKey: (@key) ->
+    @_doJoin()
+    
+  join: (fn) ->
+    # Put in a placeholder function if not given one
+    if fn?
+      @once('join', fn)
+    @inRoom = true
+    @_doJoin fn
+
+  leave: (fn) ->
+    @inRoom = false
+    if fn?
+      @once('leave', fn)
+      
+    if @controller.socket
+      @controller.socket.emit 'leave', {room : @id}, (err) =>
+        @emit('leave', err)
+        
+  _doJoin: () =>
+    if  @inRoom && @controller.socket?
+      arg = {room : @id}
+      arg.key = @key if @key?
+      @controller.socket.emit 'join', arg, (err) =>
+        @emit('join', err)
+
+      
 class this.NoDeventController extends EventEmitter
   constructor: () ->
     super()
     @rooms = {};
-    @join_callbacks = { }
-    @connected = false
-
+      
   down: () ->
     if @socket?
       @socket.removeAllListeners()
@@ -23,12 +58,6 @@ class this.NoDeventController extends EventEmitter
 
   setSocket: (socket) ->
     @socket = socket
-    socket.on 'connect', () =>
-      for room,callbacks of @join_callbacks
-        @socket.emit 'join', {room : room}, (err) ->
-          for callback in callbacks
-            callback(err);
-
     @socket.on 'connect', =>
       @.emit('connect')
 
@@ -36,31 +65,4 @@ class this.NoDeventController extends EventEmitter
       @room(data.room).emit(data.event, data.message);
 
   room: (name) ->
-    @rooms[name] ?= new Room(name);
-
-  join: (room, opts...) ->
-    fn = opts.pop()
-    key = opts[0]
-    # Put in a placeholder function if not given one
-    if !fn
-      fn = (success) ->
-        success
-
-    if !@join_callbacks[room]
-      @join_callbacks[room] = [fn];
-    else
-      @join_callbacks[room].push(fn);
-
-    if @socket?
-      arg = {room : room}
-      arg.key = key if key?
-      @socket.emit 'join', arg, fn
-
-    return @room(room);
-
-
-  @leave: (room, fn) ->
-    delete @join_callbacks[room]
-    if @socket
-      @socket.emit 'leave', {room : room}, (success) ->
-        fn(success);
+    @rooms[name] ?= new Room(name, @);

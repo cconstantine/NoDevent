@@ -22,7 +22,7 @@ describe 'NoDeventController', ->
   describe "#join", ->
     describe "without an initial connection", ->
       it "joins a room", (done)->
-        @NoDevent.join 'theroom', done
+        @NoDevent.room('theroom').join done
 
         @NoDevent.setSocket(@server)
         @server.emit('connect')
@@ -32,15 +32,15 @@ describe 'NoDeventController', ->
         @NoDevent.setSocket(@server)
 
       it "joins a room", (done)->
-        @NoDevent.join 'theroom', done
+        @NoDevent.room( 'theroom').join done
 
       it "joins a room twice", (done)->
         count = 0
-        @NoDevent.join 'theroom', ->
+        @NoDevent.room('theroom').on 'join', ->
           count++
           if count >= 2
             done()
-
+        @NoDevent.room('theroom').join()
         @server.emit 'connect'
 
 

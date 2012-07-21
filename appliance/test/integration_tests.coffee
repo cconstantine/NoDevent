@@ -4,6 +4,7 @@ io                 = require('socket.io-client');
 Server             = require('./server.coffee').Server
 should             = require('should')
 bcrypt             = require('bcrypt')
+crypto             = require('crypto')
 
 emitter = new Emitter({redis: {}});
 
@@ -20,8 +21,10 @@ server = new Server
 spawn = require('child_process').spawn
 
 genKey = (room, ts, fn) ->
-        toHash = room + ts + 'asdf'
-        bcrypt.hash toHash, 8, fn
+  toHash = room + ts + 'asdf'
+  shasum = crypto.createHash('sha256')
+  shasum.update(toHash)
+  shasum.digest('hex') + ":" + ts
         
 describe 'ServerProcess', ->
   it "causes disconnects", (done)->
@@ -57,14 +60,15 @@ describe 'NoDevent', ->
       beforeEach (done)->
         @NoDevent.setSocket(websocket())
         @NoDevent.on 'connect', done
+        @room = @NoDevent.room('theroom')
 
       describe '#join()', ->
         it 'should allow us to join a room', (done)->
-          @NoDevent.join 'theroom', done
+          @room.join done
 
         it 'should receive messages after joining', (done)->
-          room = this.NoDevent.join 'theroom'
-          room.once 'theevent', (data) ->
+          @room.join()
+          @room.once 'theevent', (data) ->
             data.should.equal('thedata')
             done()
           emitter.emit('theroom', 'theevent', 'thedata')
@@ -73,31 +77,33 @@ describe 'NoDevent', ->
       beforeEach (done)->
         @NoDevent.setSocket(websocket_protected())
         @NoDevent.on 'connect', done
+        @room = @NoDevent.room('theroom')
 
       describe '#join()', ->
         it 'should not allow us to join a room raw', (done)->
-          @NoDevent.join 'theroom', (err) ->
+          @room.join (err) ->
             should.exist(err)
             done()
 
         it 'should not allow us to join a room with a bad key', (done)->
-          @NoDevent.join 'theroom', "badkey", (err) ->
+          @room.setKey('badkey')
+          @room.join (err) ->
             should.exist(err)
             done()
 
         it 'should not allow us to join a room with a key in the past', (done)->
           ts = (new Date()).getTime() - 60*1000
-          genKey 'theroom', ts, (err, hash) =>
-            @NoDevent.join 'theroom', (hash + ":" + ts), (err) ->
-              should.exist(err)
-              done()
+          @room.setKey(genKey('theroom', ts))
+          @room.join (err) ->
+            should.exist(err)
+            done()
                         
         it 'should receive messages after joining', (done)->
           ts = (new Date()).getTime() + 60*1000
-          genKey 'theroom', ts, (err, hash) =>
-            room = this.NoDevent.join 'theroom', (hash + ":" + ts), (err) ->
-              should.not.exist(err)
-              emitter.emit('theroom', 'theevent', 'thedata')
-            room.once 'theevent', (data) ->                                
-              data.should.equal('thedata')
-              done()
+          @room.setKey(genKey('theroom', ts))
+          @room.join (err) ->
+            should.not.exist(err)
+            emitter.emit('theroom', 'theevent', 'thedata')
+          @room.once 'theevent', (data) ->                                
+            data.should.equal('thedata')
+            done()

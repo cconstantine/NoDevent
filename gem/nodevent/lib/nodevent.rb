@@ -27,7 +27,7 @@ module NoDevent
       "<script src='#{Emitter.config[:host]}/api/#{namespace}' type='text/javascript'></script>".html_safe
     end    
   end
-  ActionView::Base.send :include, Helper
+  ActionView::Base.send :include, Helper if defined?(ActionView::Base)
 
   module Emitter
     @@config = nil
@@ -39,7 +39,7 @@ module NoDevent
       def config
         @@config = HashWithIndifferentAccess.new({
                                                    :host => "http://localhost:8080",
-                                                   :namespace => ""
+                                                   :namespace => "nodevent"
                                                  }) unless @@config
         @@config
       end
@@ -52,10 +52,15 @@ module NoDevent
       end
       
       def room(obj)
-        begin
-          obj = "#{obj.class}_#{obj.id}"if (obj.is_a?(ActiveRecord::Base))
-        rescue; end
-        @@config[:secret] ? (Digest::SHA2.new << obj.to_s << @@config[:secret]).to_s : obj.to_s
+        obj = "#{obj.class}_#{obj.id}"if (obj.is_a?(ActiveRecord::Base))
+        obj
+      end
+
+      def room_key(obj, expires)
+        r = room(obj)
+        ts = (expires.to_f*1000).to_i
+
+        (Digest::SHA2.new << obj.to_s << ts.to_s<< @@config[:secret]).to_s
       end
     end
   end

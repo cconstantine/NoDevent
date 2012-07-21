@@ -47,14 +47,12 @@ Load the socket.io layer:
 
 Connect to a room and listen for events
 ```javascript
-  NoDevent.ready(
-    {username : someuser}, function() {
-      var theroom = NoDevent.join('someroom');
-      theroom.on("the_event",function(data){
-        /* Do stuff with data */
-      });
-    });
-
+  var room = NoDevent.room('theroom');
+  room.join();
+  theroom.on("the_event",function(data){
+    /* Do stuff with data */
+  });
+  
 ```
 
 Thats it!
@@ -64,7 +62,6 @@ Thats it!
 Use Cases
 =======
 - A 'realtime' chat server
-- Showing online users
 - Notify browsers when a resque job is done
 
 

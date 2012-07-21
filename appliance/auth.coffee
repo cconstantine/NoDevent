@@ -1,4 +1,4 @@
-bcrypt = require('bcrypt')
+crypto = require('crypto')
 
 class this.Auth
   constructor: (@secret) ->
@@ -25,16 +25,22 @@ class this.Auth
     if ts < (new Date).getTime()
       fn("Time has passed", false)
       return
-    checkHash = room + ts + @secret
-    bcrypt.compare checkHash, hash, (err, res) ->
-      if !err? && res == false
-        err = "Bad key"
-      fn(err, res)
-
-    
-  _genKey: (room, ts, fn) ->
     toHash = room + ts + @secret
-    bcrypt.hash toHash, 8, fn
+    
+    checkHash = @_genKey(room, ts)
+    
+    err = null
+    res = true
+    
+    if checkHash != hash
+      err = "Bad key"
+      res = false
+    fn(err, res)
+    
+  _genKey: (room, ts) ->
+    shasum = crypto.createHash('sha256')
+    shasum.update(room + ts + @secret)
+    shasum.digest('hex')
 
 
   _splitSig: (sig) ->
