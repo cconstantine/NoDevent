@@ -37,10 +37,10 @@ module NoDevent
       end
 
       def config
-        @@config = HashWithIndifferentAccess.new({
-                                                   :host => "http://localhost:8080",
-                                                   :namespace => "nodevent"
-                                                 }) unless @@config
+        @@config ||= Hash.new({
+                                :host => "http://localhost:8080",
+                                :namespace => "nodevent"
+                              })
         @@config
       end
 
@@ -52,7 +52,8 @@ module NoDevent
       end
       
       def room(obj)
-        obj = "#{obj.class}_#{obj.id}"if (obj.is_a?(ActiveRecord::Base))
+        obj = "#{obj.class}_#{obj.to_param}" if (defined?(ActiveRecord::Base) && 
+                                           obj.is_a?(ActiveRecord::Base))
         obj
       end
 
