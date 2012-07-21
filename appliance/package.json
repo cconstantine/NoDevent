@@ -2,7 +2,7 @@
   "name": "nodevent",
 
   "description": "Redis -> Browser pubsub appliance",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "engines": {
     "node": ">= 0.6.x < 0.7.0"
   },
@@ -21,8 +21,7 @@
     "express" : "=2.5.9",
     "snockets" : "=1.3.7",
     "connect-assets" : "=2.2.1",
-    "jade" : "latest",
-    "bcrypt" : "0.7.0"
+    "jade" : "latest"
   },
 
   "devDependencies": {

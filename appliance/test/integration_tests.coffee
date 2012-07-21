@@ -3,7 +3,6 @@ Emitter            = require("../emitter.coffee")
 io                 = require('socket.io-client');
 Server             = require('./server.coffee').Server
 should             = require('should')
-bcrypt             = require('bcrypt')
 crypto             = require('crypto')
 
 emitter = new Emitter({redis: {}});
