@@ -162,4 +162,25 @@ If all you have is the room object you can get the room's name
 room.id;
 ```
 
+###### Events
+
+Every room object is an event emitter with two special events:
+
+```javascript
+room.on('join', function(err){})
+```
+This event is emitted every time a join to the room happens, or is attempted.  The err object will exist if there was an error joining the room
+
+```javascript
+room.on('leave', function(err){})
+```
+This event is emitted every time you leave the room.  The err object will exist if the leave was unexpected and indicate what happened.
+
+To listen to an event that you sent from a backend process simply wait for the named event
+```javascript
+room.on('the_event', function(data){})
+```
+
+The data variable will have whatever was passed (if anything).
+
 
