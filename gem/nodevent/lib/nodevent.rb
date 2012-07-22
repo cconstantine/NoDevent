@@ -6,20 +6,26 @@ module NoDevent
     base.extend(NoDevent::Emitter)
   end
 
-  def emit(name, messsage)
-    Emitter.emit(self.room, name, message)
+  def emit(name, messsage=nil)
+    Emitter.emit(self, name, message || self)
   end
 
   def room
     Emitter.room(self)
   end
 
+  def room_key(expires)
+    Emitter.room_key(self, expires)
+  end
+    
+
   module Helper
     def javascript_include_nodevent
       host = NoDevent::Emitter.config['host']
       namespace = NoDevent::Emitter.config['namespace']
+      namespace = '/' + namespace unless namespace[0] == '/'
 
-      "<script src='#{host}/api/#{namespace}' type='text/javascript'></script>".html_safe
+      "<script src='#{host}/api#{namespace}' type='text/javascript'></script>".html_safe
     end    
   end
   ActionView::Base.send :include, Helper if defined?(ActionView::Base)
@@ -34,14 +40,16 @@ module NoDevent
       def config
         @@config ||= Hash.new({
                                 :host => "http://localhost:8080",
-                                :namespace => "nodevent"
+                                :namespace => "/nodevent"
                               })
         @@config
       end
 
       def emit(room, name, message)
+        room = NoDevent::Emitter.room(room)
+
         $redis.publish("events", 
-                       { :room => NoDevent::Emitter.room(room),
+                       { :room => room,
                          :event => name, 
                          :message => message}.to_json)
       end
@@ -49,6 +57,7 @@ module NoDevent
       def room(obj)
         obj = "#{obj.class}_#{obj.to_param}" if (defined?(ActiveRecord::Base) && 
                                            obj.is_a?(ActiveRecord::Base))
+        obj = "#{obj.name}" if (obj.class == Class || obj.class == Module)
         obj
       end
 
