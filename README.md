@@ -60,6 +60,17 @@ Thats it!
 
 # Documentation
 
+## Versioning
+
+I'm using the following versioning scheme:
+```
+x.y.z
+```
+
+A change in the 'x' indictes that there has been a backwards incompatible interface change.  A change in the 'y' indicates some new functionality or significant bug fix, and a change in the 'z' indictes a minor bug fix.
+
+Don't read anything else into these numbers.  I'm following this pattern so that automatic version matching systems like what's in bundler and npm can update developers' packages and protect against backwards incompatible changes.
+
 ## Appliance / server
 
 NoDevent is provided as an npm module/server.  Simply install the 'nodevent' module and you can 'npn start nodevent' to get started.  
