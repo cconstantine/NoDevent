@@ -60,20 +60,7 @@ Thats it!
 
 # Documentation
 
-## Versioning
-
-I'm using the following versioning scheme:
-```
-x.y.z
-```
-
-A change in the 'x' indictes that there has been a backwards incompatible interface change.  A change in the 'y' indicates some new functionality or significant bug fix, and a change in the 'z' indictes a minor bug fix.
-
-Don't read anything else into these numbers.  I'm following this pattern so that automatic version matching systems like what's in bundler and npm can update developers' packages and protect against backwards incompatible changes.
-
-## Appliance / server
-
-NoDevent is provided as an npm module/server.  Simply install the 'nodevent' module and you can 'npn start nodevent' to get started.  
+The NoDevent server appliance is provided as an npm module/server.  Simply install the 'nodevent' module and you can 'npn start nodevent' to get started.  
 
 ### Configuration
 
@@ -90,7 +77,25 @@ An example config file.
 ```
 The above config us what is used by default if no config file is available.  It tells NoDevent to listen on port 8080, and have one namespace.  Each Namespace listens to a distinct redis instance for events.  Each namespace may also provide a secret for security.
 
-You may provide an ssl : {key : <keyfile>, cert: <certfile>}` if you want to use ssl
+You may provide a top-level ssl : {key : 'keyfile', cert: 'certfile'} if you want to use ssl.
+
+A config with every option being used
+```javascript
+{
+  "port" : 443,
+  "ssl" : {
+    "key" : "keyfilename",
+    "cert" : "certfilename"
+  }
+  "/nodevent" : { 
+    "redis" : {"port" :6379 ,"host" : "localhost"}
+  }
+  "/other_namespace" : { 
+    "redis" : {"port" :6379 ,"host" : "redis.internal"},
+    "secret" : "lajf0q983j4laidsnvqo84jfoqijflkjafds"
+  }
+}
+```
 
 ### Security
 It is possible to secure access to rooms with a secret key.  If a secret string has been provided for a room that room is secured and any client that wishes to join must provide a valid key.
@@ -115,9 +120,7 @@ where 'room' is the name of the room, ts is the experation time of the key, and 
 
 The above loads the required js, and initiates a socket.io connection to the '/nodevent' namespace.After this script tag, the NoDevent system is ready to go.
 
-### JS Interface
-
-#### NoDevent object
+### NoDevent object
 
 ```javascript
 window.NoDevent
@@ -125,7 +128,7 @@ window.NoDevent
 
 You do not need to wait to use this object.  It will be there after the script tag has executed and it's ready to go.
 
-##### Events
+#### Events
 To keep up with what is happening with NoDevent you may listen for events directly on the window.NoDevent object:
 
 ```javascript
@@ -139,7 +142,7 @@ You can also ask NoDevent directly if it is connected with the connected() metho
 
 For more events, see https://github.com/LearnBoost/socket.io-client/
 
-#####  Rooms
+####  Rooms
 
 To get events you must first join a room.
 
@@ -149,7 +152,7 @@ var room = NoDevent.room('the_room')
 
 The room object returned is where you manage all interactions with a room
 
-###### Methods and Properties
+##### Methods and Properties
 
 Setting the key for a room (see security section above)
 ```javascript
@@ -173,7 +176,7 @@ If all you have is the room object you can get the room's name
 room.id;
 ```
 
-###### Events
+##### Events
 
 Every room object is an event emitter with two special events:
 
@@ -195,3 +198,13 @@ room.on('the_event', function(data){})
 The data variable will have whatever was passed (if anything).
 
 
+## Versioning
+
+I'm using the following versioning scheme:
+```
+x.y.z
+```
+
+A change in the 'x' indictes that there has been a backwards incompatible interface change.  A change in the 'y' indicates some new functionality or significant bug fix, and a change in the 'z' indictes a minor bug fix.
+
+Don't read anything else into these numbers.  I'm following this pattern so that automatic version matching systems like what's in bundler and npm can update developers' packages and protect against backwards incompatible changes. 
