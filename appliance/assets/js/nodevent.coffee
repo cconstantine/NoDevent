@@ -61,6 +61,9 @@ class this.NoDeventController extends EventEmitter
     @socket = socket
     @socket.on 'connect', =>
       @emit('connect')
+    @socket.on 'disconnect', =>
+      @emit('disconnect')
+      
     if @connected()
       @emit('connect')
 

@@ -4,7 +4,7 @@
   "description": "Redis -> Browser pubsub appliance",
   "version": "3.0.2",
   "engines": {
-    "node": ">= 0.6.x < 0.7.0"
+    "node": ">= 0.8.0 < 0.8.x"
   },
   "main": "lib",
   "repository": {
@@ -21,13 +21,14 @@
     "express" : "=2.5.9",
     "snockets" : "=1.3.7",
     "connect-assets" : "=2.2.1",
-    "jade" : "latest"
+    "jade" : "latest",
     "coffee-script" : "latest"
   },
 
   "devDependencies": {
     "mocha": "latest",
     "socket.io-client": "latest",
-    "should" : "latest"
+    "should" : "latest",
+    "docco" : "latest"
   }
 }
