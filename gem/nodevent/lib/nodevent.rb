@@ -16,15 +16,10 @@ module NoDevent
 
   module Helper
     def javascript_include_nodevent
-      host = URI.parse(NoDevent::Emitter.config[:host])
-      namespace = URI.parse(NoDevent::Emitter.config[:namespace])
+      host = NoDevent::Emitter.config['host']
+      namespace = NoDevent::Emitter.config['namespace']
 
-      params = [
-                "host=#{host}",
-                "namespace=#{namespace}"
-               ].join("&")
-
-      "<script src='#{Emitter.config[:host]}/api/#{namespace}' type='text/javascript'></script>".html_safe
+      "<script src='#{host}/api/#{namespace}' type='text/javascript'></script>".html_safe
     end    
   end
   ActionView::Base.send :include, Helper if defined?(ActionView::Base)

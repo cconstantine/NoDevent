@@ -23,10 +23,10 @@ class Room extends EventEmitter
     if fn?
       @once('join', fn)
     @inRoom = true
-    @_doJoin fn
+    @_doJoin()
 
   leave: (fn) ->
-    @inRoom = false
+    @inRoom = false 
     if fn?
       @once('leave', fn)
       
@@ -34,7 +34,8 @@ class Room extends EventEmitter
       @controller.socket.emit 'leave', {room : @id}, (err) =>
         @emit('leave', err)
         
-  _doJoin: () =>
+  _doJoin: () ->
+    obj = @
     if  @inRoom && @controller.socket?
       arg = {room : @id}
       arg.key = @key if @key?
@@ -59,10 +60,15 @@ class this.NoDeventController extends EventEmitter
   setSocket: (socket) ->
     @socket = socket
     @socket.on 'connect', =>
-      @.emit('connect')
+      @emit('connect')
+    if @connected()
+      @emit('connect')
 
     @socket.on 'event', (data) =>
       @room(data.room).emit(data.event, data.message);
 
+  connected: () ->
+    @socket? && @socket.socket? && @socket.socket.connected
+    
   room: (name) ->
     @rooms[name] ?= new Room(name, @);

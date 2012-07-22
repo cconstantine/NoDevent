@@ -54,7 +54,16 @@ describe 'NoDevent', ->
       server.start done
     after (done)->
       server.stop(done)
-
+    describe "#connected", ->
+      it "should give false before connection", ->
+          @NoDevent.connected().should.equal(false)
+        
+      it "should give true after connecting", (done)->
+        @NoDevent.on 'connect', () =>
+          @NoDevent.connected().should.equal(true)
+          done()
+        @NoDevent.setSocket(websocket())
+                
     describe 'with a normal connection', ->
       beforeEach (done)->
         @NoDevent.setSocket(websocket())
