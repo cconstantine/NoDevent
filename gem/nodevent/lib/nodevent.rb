@@ -6,7 +6,7 @@ module NoDevent
     base.extend(NoDevent::Emitter)
   end
 
-  def emit(name, messsage=nil)
+  def emit(name, message=nil)
     Emitter.emit(self, name, message || self)
   end
 
