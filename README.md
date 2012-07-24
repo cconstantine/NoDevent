@@ -109,7 +109,7 @@ where 'room' is the name of the room, ts is the experation time of the key, and 
 
 ## Web
 
-The web (javscript) component of NoDevnet is for receiving events.  
+The web (javscript) component of NoDevent is for receiving events.  
 
 ### Connecting
 
