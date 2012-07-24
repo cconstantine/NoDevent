@@ -24,7 +24,7 @@ nodevent expects a $redis global to exist and be a connect to your redis server.
 ActiveRecord Models:
 ```ruby
 class SomeModel < ActiveRecord::Base
-  include NoDevent
+  include NoDevent::Base
 end
 
 #Emit a model instance as a json object to that model
@@ -307,7 +307,7 @@ To help even further, I've provided the NoDevent module as an include-able thing
 
 ```ruby
 class SomeModel < ActiveRecord::Base
-  include NoDevent
+  include NoDevent::Base
 
   after_create :nodevent_create
   after_update :nodevent_update
