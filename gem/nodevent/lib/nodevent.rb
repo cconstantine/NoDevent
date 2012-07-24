@@ -3,19 +3,46 @@ require 'json'
 
 module NoDevent
   def self.included(base)
-    base.extend(NoDevent::Emitter)
+    raise "No longer supported, Please include NoDevent::Base instead"
   end
+  module Base
+    def self.included(base)
+      base.extend(NoDevent::Base)
+    end
+    
+    class << self
+      def emit(name, message)
+        NoDevent::Emitter.emit(self.room, name, message)
+      end
+      def room(obj)
+        NoDevent::Emitter.room(self)
+      end
+      def room_key(expires)
+        Emitter.room_key(self.room, expires)
+      end
+    end
 
-  def emit(name, message=nil)
-    Emitter.emit(self, name, message || self)
-  end
+    def emit(name, message=nil)
+      Emitter.emit(self.room, name, message || self)
+    end
+    
+    def room
+      Emitter.room(self)
+    end
+    
+    def room_key(expires)
+      Emitter.room_key(self.room, expires)
+    end
 
-  def room
-    Emitter.room(self)
-  end
 
-  def room_key(expires)
-    Emitter.room_key(self, expires)
+    def nodevent_create
+      NoDevent::Emitter.emit(self.class.name, 'create', self)
+    end
+    
+    def nodevent_update
+      self.emit('update')
+    end
+  
   end
     
 
@@ -39,7 +66,7 @@ module NoDevent
 
       def config
         @@config ||= Hash.new({
-                                :host => "http://localhost:8080",
+                                :host => "http://loadsfcalhost:8080",
                                 :namespace => "/nodevent"
                               })
         @@config
@@ -48,6 +75,7 @@ module NoDevent
       def emit(room, name, message)
         room = NoDevent::Emitter.room(room)
 
+        puts "NoDevent::emit: #{room}, #{name}, #{message}"
         $redis.publish("events", 
                        { :room => room,
                          :event => name, 
