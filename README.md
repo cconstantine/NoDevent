@@ -316,13 +316,6 @@ class SomeModel < ActiveRecord::Base
     super(options).merge(:nodevent => {:room => room})
   end
 
-  def nodevent_create
-    NoDevent::Emitter.emit(self.class, 'create', self)
-  end
-
-  def nodevent_update
-    self.emit('update')
-  end
 end
 ```
 
