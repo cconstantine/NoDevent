@@ -75,7 +75,6 @@ module NoDevent
       def emit(room, name, message)
         room = NoDevent::Emitter.room(room)
 
-        puts "NoDevent::emit: #{room}, #{name}, #{message}"
         $redis.publish("events", 
                        { :room => room,
                          :event => name, 
