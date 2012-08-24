@@ -135,7 +135,7 @@ You do not need to wait to use this object.  It will be there after the script t
 To get notified of events happening to the socket connection used by NoDevent you may listen for events directly on the window.NoDevent object:
 
 ```javascript
-// Called when a connected to the server
+// Called when a connection is established to the server
 NoDevent.on('connect', function(){});
 
 // Called when disconnected from the server
@@ -171,13 +171,13 @@ Joining a room:
 ```javascript
 room.join(function(err){});
 ```
-Initiates a request to join a room.  If a callback fn is provided it will be called a single time, with an err if the join failed.
+Initiates a request to join a room.  If a callback is provided it will be called a single time, with an err if the join failed.
 
 Leaving a room
 ```javascript
 room.leave(function(err){});
 ```
-Initiates a request to leave a room.  If a callback fn is provided it will be called a single time, with an err if leaving the room failed.
+Initiates a request to leave a room.  If a callback is provided it will be called a single time, with an err if leaving the room failed.
 
 If all you have is the room object you can get the room's name
 ```javascript
@@ -207,7 +207,7 @@ The data variable will have whatever was passed (if anything).
 
 ## Ruby gem
 
-The ruby (gem) component of NoDevnet is for sending events.  
+The ruby (gem) component of NoDevent is for sending events.  
 
 ### Installation
 
@@ -290,7 +290,7 @@ The above code will generate a key for the room that is valid for the next hour.
 
 ### NoDevent::Emitter.emit(room, event, message)
 
-This method emits a named event with a message message (any object that responds to .to_json) to the room.
+This method emits a named event with a message (any object that responds to .to_json) to the room.
 
 ```ruby
 NoDevent::Emitter.emit(NoDevent::Emitter.room(SomeModel.first), 'the_event', 'some_message')
@@ -307,7 +307,7 @@ room.on('the_event', function(message) {});
 This method can be called from anywhere, and it will send the event to any browser client listening appropriately.  This means it can be emitted on model creation, or even from a resque job.
 
 ### NoDevent mixin.
-To help even further, I've provided the NoDevent module as an include-able thing for models.
+To help even further, I've provided the NoDevent::Base module as an include-able thing for models.
 
 ```ruby
 class SomeModel < ActiveRecord::Base
@@ -317,7 +317,7 @@ class SomeModel < ActiveRecord::Base
   after_update :nodevent_update
 
   def as_json(options={})
-    super(options).merge(:nodevent => {:room => room})
+    super(options).merge(:nodevent => {:room => room, :key => room_key(Time.zone.now + 1.hour)})
   end
 
 end
@@ -327,7 +327,7 @@ The above example includes NoDevent support directly into a model.
 
 It also provides the following:
 * The class's room will be notified of created instances
-* Instances will include the room name for getting updates
+* Instances will include the room name and key for getting updates
 * Updates to a model will notify listeners of the change
 
 
