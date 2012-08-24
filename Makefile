@@ -1,4 +1,4 @@
 test:
-	cd appliance && ./mocha
+	cd appliance && make run_test
 
 PHONY: test
