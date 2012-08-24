@@ -12,6 +12,7 @@ Quick* Start (Rails)
 -----------
 1) Install Node.js (http://nodejs.org/)
 
+
 2) Install and start NoDevent with npm:
 
     npm install nodevent
