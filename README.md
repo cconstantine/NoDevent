@@ -6,7 +6,7 @@ See a demo at http://nodevent.com
 
 # Motivation
 
-Both node.js and Rails are great systems.  I think rails is great for it's maturity and feature set, and Node.js is great for socket.io.  There are times when I'm working in a Rails app, and I want some kind of socket.io interaction with the browser.  With NoDevent I can write all of my application logic in Rails, and syndicate the socket.io events out to the browser.  With careful organization of NoDevent events you can extend the View of MVC into the browser and have confidence that that when a Model changes, all Views of it change too.
+Both node.js and Rails are great systems.  I think rails is great for its maturity and feature set, and Node.js is great for socket.io.  There are times when I'm working in a Rails app, and I want some kind of socket.io interaction with the browser.  With NoDevent I can write all of my application logic in Rails, and syndicate the socket.io events out to the browser.  With careful organization of NoDevent events you can extend the View of MVC into the browser and have confidence that that when a Model changes, all Views of it change too.  
 
 Quick* Start (Rails)
 -----------
