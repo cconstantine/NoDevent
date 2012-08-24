@@ -64,7 +64,9 @@ Thats it!
 
 # Documentation
 
-The NoDevent server appliance is provided as an npm module/server.  Simply install the 'nodevent' module and you can 'npn start nodevent' to get started.  
+## Appliance
+
+The NoDevent server appliance is provided as an npm module/server.  Simply install the 'nodevent' module and you can 'npn start nodevent' to get started.  The appliance is stateless with respect to you rapplication, so you can run as many instances as you like.
 
 ### Configuration
 
