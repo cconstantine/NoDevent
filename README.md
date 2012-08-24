@@ -15,8 +15,8 @@ Quick* Start (Rails)
 
 2) Install and start NoDevent with npm:
 
-    npm install nodevent
-    npm start nodevent
+    sudo npm install -g nodevent
+    npm start -g nodevent
 
 3) Add the following to the gemspec
 
@@ -113,6 +113,24 @@ sha256(room + ts + secret)
 ```
 where 'room' is the name of the room, ts is the experation time of the key, and secret is the configured secret.
 
+
+### Upstart
+
+You can use the following upstart script to start NoDevent whenever your system starts
+
+```
+description "nodevent"
+
+start on (filesystem and net-device-up IFACE=lo)
+stop on shutdown
+
+respawn
+respawn limit 99 5
+
+script
+    exec /usr/local/bin/npm start -g nodevent
+end script
+```
 
 ## Web
 
