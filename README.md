@@ -226,10 +226,9 @@ room.on('the_event', function(data){})
 
 The data variable will have whatever was passed (if anything).
 
-## Ruby gem
+## Language specific support
 
-
-cconstantine/NoDevent-gem
+Ruby: http://github.com/cconstantine/NoDevent-gem
 
 
 ## Versioning
