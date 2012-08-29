@@ -26,6 +26,18 @@ nodevent expects a $redis global to exist and be a connect to your redis server.
 
 4) Send some events
 
+All events that will be sent out via NoDevent are published from redis.  To send an event you must know the namespace, room, event name, and message (if any).
+
+The NoDevent appliance expects to get a message published in the redis channel coresponding to the nodevent namespace.  The data posted is expected to be a json object
+with the keys room, event, message.
+
+
+```redis
+publish "the_namespace" "{room: 'the_room', event: 'the_event', message: 'the_message'}"
+```
+
+See http://redis.io/commands/publish for more information on the redis publish command
+
 ActiveRecord Models:
 ```ruby
 class SomeModel < ActiveRecord::Base

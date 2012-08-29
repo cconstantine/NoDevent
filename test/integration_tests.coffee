@@ -5,8 +5,6 @@ Server             = require('./server.coffee').Server
 should             = require('should')
 crypto             = require('crypto')
 
-emitter = new Emitter({redis: {}});
-
 #process.on 'uncaughtException', (err) ->
 #  console.log('Caught exception: ' + err);
 
@@ -69,6 +67,8 @@ describe 'NoDevent', ->
         @NoDevent.setSocket(websocket())
         @NoDevent.on 'connect', done
         @room = @NoDevent.room('theroom')
+        @emitter = new Emitter("/nodevent", {redis: {}});
+
 
       describe '#join()', ->
         it 'should allow us to join a room', (done)->
@@ -79,13 +79,14 @@ describe 'NoDevent', ->
           @room.once 'theevent', (data) ->
             data.should.equal('thedata')
             done()
-          emitter.emit('theroom', 'theevent', 'thedata')
+          @emitter.emit('theroom', 'theevent', 'thedata')
 
     describe 'with a protected connection', ->
       beforeEach (done)->
         @NoDevent.setSocket(websocket_protected())
         @NoDevent.on 'connect', done
         @room = @NoDevent.room('theroom')
+        @emitter = new Emitter("/protected", {redis: {}});
 
       describe '#join()', ->
         it 'should not allow us to join a room raw', (done)->
@@ -109,9 +110,9 @@ describe 'NoDevent', ->
         it 'should receive messages after joining', (done)->
           ts = (new Date()).getTime() + 60*1000
           @room.setKey(genKey('theroom', ts))
-          @room.join (err) ->
+          @room.join (err) =>
             should.not.exist(err)
-            emitter.emit('theroom', 'theevent', 'thedata')
+            @emitter.emit('theroom', 'theevent', 'thedata')
           @room.once 'theevent', (data) ->                                
             data.should.equal('thedata')
             done()

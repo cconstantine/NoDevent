@@ -2,13 +2,13 @@ require('coffee-script')
 var redis = require("redis");
 var Auth = require("./auth.coffee").Auth
 
-function build_server(io, config) {
+function build_server(io, namespace, config) {
   var rooms = {};
   var secret = config.secret;
   var client = redis.createClient(config.redis.port, config.redis.host, config.redis.options);
   var auther = new Auth(secret)
 
-  client.subscribe(config.redis.subscribe || 'events');
+  client.subscribe(namespace);
   client.on(
     "message",function (channel, message) {
       var data = JSON.parse(message);

@@ -82,7 +82,7 @@ io.enable('browser client gzip');          // gzip the file
 for(var namespace in config) {
   if (namespace[0] == '/') {
     var ns = io.of(namespace);
-    nodevent(ns,config[namespace]);
+    nodevent(ns, namespace, config[namespace]);
   }
 }
 
