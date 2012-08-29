@@ -1,4 +1,5 @@
-test:
-	cd appliance && make run_test
+run_test:
+	npm install
+	./mocha
 
-PHONY: test
+PHONY: run_test

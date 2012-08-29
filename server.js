@@ -49,6 +49,8 @@ app.configure(function () {
 app.get('/', function(req, res) {
   res.render('index');
 });
+
+
 app.get('/api/:namespace', function(req, res){
   res.contentType('js');
 
