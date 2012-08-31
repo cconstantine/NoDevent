@@ -1,3 +1,5 @@
+http               = require('http')
+
 class this.Server
   constructor: () ->
     @spawn = require('child_process').fork
@@ -14,7 +16,9 @@ class this.Server
       @child = @spawn('server.js', ['./test/config.json'])
       @child.once 'message', (m) =>
         if m == 'ready'
-          fn()
+          http.get "http://localhost:9876/api/nodevent", ->
+            http.get "http://localhost:9876/api/protected", ->
+              fn()
       @child.once 'exit', =>
         @child = null;
 

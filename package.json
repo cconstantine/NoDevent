@@ -2,11 +2,11 @@
   "name": "nodevent",
 
   "description": "Redis -> Browser pubsub appliance",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "engines": {
     "node": ">= 0.8.0 < 0.8.x"
   },
-  "main": "lib",
+  "main": "library",
   "start": "node server.js",
   "repository": {
     "type": "git",

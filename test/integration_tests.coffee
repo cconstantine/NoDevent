@@ -1,14 +1,13 @@
 NoDeventController = require('../assets/js/nodevent.coffee').NoDeventController
-Emitter            = require("../emitter.coffee")
+Emitter            = require("../lib/emitter.coffee")
 io                 = require('socket.io-client');
 Server             = require('./server.coffee').Server
 should             = require('should')
 crypto             = require('crypto')
-
 #process.on 'uncaughtException', (err) ->
 #  console.log('Caught exception: ' + err);
 
-websocket = () ->
+websocket = () ->  
   io.connect('http://localhost:9876/nodevent', {'force new connection': true})
 
 websocket_protected = () ->
