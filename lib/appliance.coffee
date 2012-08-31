@@ -15,7 +15,7 @@ class this.Appliance
     else if  fs.existsSync('/etc/nodevent.json')
       @config_filename = '/etc/nodevent.json'
     else 
-      @config_filename = path.join(__dirname, "config.json")
+      @config_filename = path.join(__dirname, "../config.json")
     @config = JSON.parse(fs.readFileSync(@config_filename, "utf8"))
 
     if @config.ssl?
