@@ -55,7 +55,8 @@ class this.Appliance
             throw err;
           @ensureNamespace '/' + req.params.namespace, (err) =>
             if (err)
-              throw err;
+              res.end("Namespace #{req.params.namespace} not available");
+              return
             res.render('nodevent.ejs',
               deps : js,
               opts : 
