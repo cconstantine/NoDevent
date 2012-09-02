@@ -3,10 +3,10 @@ require('coffee-script')
 path = require('path')
 fs   = require('fs');
 express = require('express');
-nodevent = require('./lib.js');
 Snockets = require('snockets');
 snocket = new Snockets();
-
+Namespaces = require('./namespaces').Namespaces
+    
 class this.Appliance
   constructor: (args) ->
     @activeNamespaces = {}
@@ -17,14 +17,14 @@ class this.Appliance
     else 
       @config_filename = path.join(__dirname, "../config.json")
     @config = JSON.parse(fs.readFileSync(@config_filename, "utf8"))
-
+        
     if @config.ssl?
       @app = express.createServer
-          key: fs.readFileSync(@config.ssl.key).toString() 
-          cert:fs.readFileSync(@config.ssl.cert).toString()
+        key: fs.readFileSync(@config.ssl.key).toString() 
+        cert:fs.readFileSync(@config.ssl.cert).toString()
     else
       @app = express.createServer()
-
+      
     @io = require('socket.io').listen(@app, {'log level' : 0})
     @io.enable('browser client minification')
     @io.enable('browser client etag')
@@ -41,42 +41,38 @@ class this.Appliance
 
       @app.use(@app.router);
 
+    @namespaces = new Namespaces(@io)
+    for k,v of @config
+      if k[0] == '/'
+        @namespaces.add(k, v)
+
     @app.get '/api/:namespace', (req, res) =>
       res.contentType('js');
 
       host = if req.connection.encrypted then "https://" else "http://"
       host += req.headers.host
-
+      namespace = '/' + req.params.namespace
+      
       snocket.getConcatenation( 
         'assets/js/nodevent_asset.coffee',
         {minify: false},
         (err, js) =>
           if (err)
-            throw err;
-          @ensureNamespace '/' + req.params.namespace, (err) =>
-            if (err)
-              res.end("Namespace #{req.params.namespace} not available");
-              return
+            res.statusCode = 500
+            res.end("");
+          else if @namespaces.exists(namespace)
             res.render('nodevent.ejs',
               deps : js,
               opts : 
-                namespace : req.params.namespace,
+                namespace : namespace,
                 host : host)
+          else
+            res.statusCode = 404
+            res.end("Namespace #{req.params.namespace} not found.");
+            
       )
-    @ready_to_listen () =>
-      @app.listen(@config.port);
+    @listen()
 
-  ready_to_listen: (fn) ->
-    fn()
-     
-  ensureNamespace: (namespace, fn) ->
-    if @activeNamespaces[namespace]? 
-      fn()
-      return
-    if !@config[namespace]?
-      fn("Namespace #{namespace} not found")
-      return
-    @activeNamespaces[namespace] = @config[namespace]
-    nodevent(@io.of(namespace), namespace, @config[namespace])
-    fn()
+  listen: () ->
+    @app.listen(@config.port);
     
