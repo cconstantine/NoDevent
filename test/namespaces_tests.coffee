@@ -43,9 +43,6 @@ describe 'Namespaces', ->
         @connection = io.connect('http://localhost:9786/nodevent', {'force new connection': true})
         @connection.once 'connect', done
 
-      #afterEach () ->
-      #  @connect.removeAllListeners()
-        
       describe "in the_room", () ->
         beforeEach (done)->
           @connection.emit 'join', {room: 'the_room'}, (err) ->
