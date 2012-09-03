@@ -24,18 +24,54 @@ describe 'Namespaces', ->
       
     it "exists", ()->
       @namespaces.exists('/nodevent').should.equal(true)
-   
+
+    describe "after removing a namespace", () ->
+      beforeEach ->
+        @namespaces.remove('/nodevent')
+        
+      it "doesn't exist", () ->
+        @namespaces.exists('/nodevent').should.equal(false)
+
+      it "doesn't connect", (done) ->
+        @connection = io.connect('http://localhost:9786/nodevent', {'force new connection': true})
+        @connection.once 'connect', done
+        done()
+        
     describe "connected", () ->
       beforeEach (done) ->
         @emitter = new Emitter('/nodevent', config)
         @connection = io.connect('http://localhost:9786/nodevent', {'force new connection': true})
-        @connection.on 'connect', done
+        @connection.once 'connect', done
 
+      #afterEach () ->
+      #  @connect.removeAllListeners()
+        
       describe "in the_room", () ->
         beforeEach (done)->
           @connection.emit 'join', {room: 'the_room'}, (err) ->
-          done()
+            done()
 
-        it "emits", (done) ->
-          @connection.on 'event', -> done()
+        it "emits", (doned) ->
+          @connection.once 'event', -> doned()
           @emitter.emit('the_room', 'the_event', 'the_message')
+          
+        it "emits again", (doned) ->
+          @connection.once 'event', -> doned()
+          @emitter.emit('the_room', 'the_event', 'the_message')
+          
+        describe "after removing a namespace", () ->
+          beforeEach ->
+            @namespaces.remove('/nodevent')
+            
+          it "doesn't exist", () ->
+            @namespaces.exists('/nodevent').should.equal(false)
+
+          it "doesn't recieve events", (done) ->
+            @connection.once 'event', -> done()
+            @emitter.emit('the_room', 'the_event', 'the_message')
+            done()
+            
+          it "doesn't connect", (done) ->
+            @connection = io.connect('http://localhost:9786/nodevent', {'force new connection': true})
+            @connection.once 'connect', done
+            done()
