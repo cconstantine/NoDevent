@@ -1,4 +1,4 @@
 require('coffee-script')
 
-this.Appliance = require('./lib/appliance')
-this.Emitter   = require('./lib/emitter')
+this.Appliance = require('./lib/appliance').Appliance
+this.Emitter   = require('./lib/emitter').Emitter

@@ -28,7 +28,7 @@ class this.Appliance
     @io = require('socket.io').listen(@app, {'log level' : 0})
     @io.enable('browser client minification')
     @io.enable('browser client etag')
-    @io.enable('browser client gzip')
+    #@io.enable('browser client gzip')
     @app.set('view engine', 'ejs');
     @app.configure () =>
       @app.use(express.static(__dirname + '/public'));
