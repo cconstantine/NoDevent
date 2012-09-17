@@ -2,7 +2,7 @@ Namespaces         = require('../lib/namespaces').Namespaces
 socketio           = require('socket.io')
 should             = require('should')
 io                 = require('socket.io-client');
-Emitter            = require('../lib/emitter')
+Emitter            = require('../lib/emitter').Emitter
 
 config =
   redis:

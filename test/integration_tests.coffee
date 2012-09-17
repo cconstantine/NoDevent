@@ -1,5 +1,5 @@
 NoDeventController = require('../assets/js/nodevent.coffee').NoDeventController
-Emitter            = require("../lib/emitter.coffee")
+Emitter            = require("../lib/emitter.coffee").Emitter
 io                 = require('socket.io-client');
 Server             = require('./server.coffee').Server
 should             = require('should')
