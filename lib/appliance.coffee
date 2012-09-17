@@ -59,7 +59,7 @@ class this.Appliance
         (err, js) =>
           if (err)
             res.statusCode = 500
-            res.end("");
+            res.end(err);
           else if @namespaces.exists(namespace)
             res.render('nodevent.ejs',
               deps : js,
