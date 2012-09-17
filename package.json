@@ -2,7 +2,7 @@
   "name": "nodevent",
 
   "description": "Redis -> Browser pubsub appliance",
-  "version": "3.1.9",
+  "version": "3.1.10",
   "engines": {
     "node": ">= 0.8.0 < 0.8.x"
   },

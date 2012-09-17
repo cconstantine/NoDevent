@@ -37,6 +37,7 @@ class this.Appliance
       @app.use(require('connect-assets')());
       @app.set('view engine', 'jade');
       @app.set('view options', { layout: false });
+      @app.set('views', [path.join(__dirname, "../views")])
       @app.register('ejs', require('ejs'));
 
       @app.use(@app.router);
