@@ -54,7 +54,7 @@ class this.Appliance
       namespace = '/' + req.params.namespace
 
       snocket.getConcatenation(
-        'assets/js/nodevent_asset.coffee',
+        path.join(__dirname, "../assets/js/nodevent_asset.coffee"),
         {minify: false},
         (err, js) =>
           if (err)
