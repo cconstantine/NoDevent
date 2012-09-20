@@ -3,7 +3,7 @@ NoDevent
 =======
 A system for notifying browser clients about events happening in a Ruby On Rails (or other non-evented backend) such as private messages, new discussion posts, or interesting resque jobs.  The goal is to reduce or elliminate the need for polling from the browser.  
 
-See a demo at http://nodevent.com
+See a demo at http://demo.nodevent.com
 
 # Motivation
 
