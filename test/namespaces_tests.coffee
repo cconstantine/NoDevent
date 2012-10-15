@@ -12,7 +12,7 @@ config =
 describe 'Namespaces', ->
   beforeEach (done)->
     @io = socketio.listen 9786,{'log level' : 0},  =>
-      @namespaces = new Namespaces(@io)
+      @namespaces = new Namespaces([@io])
       done()
       
   afterEach ->

@@ -7,6 +7,9 @@ Snockets = require('snockets');
 snocket = new Snockets();
 Namespaces = require('./namespaces').Namespaces
     
+https = require 'https'
+http = require 'http'
+
 class this.Appliance
   constructor: (args) ->
     @activeNamespaces = {}
@@ -16,19 +19,11 @@ class this.Appliance
       @config_filename = '/etc/nodevent.json'
     else 
       @config_filename = path.join(__dirname, "../config.json")
+    
     @config = JSON.parse(fs.readFileSync(@config_filename, "utf8"))
-        
-    if @config.ssl?
-      @app = express.createServer
-        key: fs.readFileSync(@config.ssl.key).toString() 
-        cert:fs.readFileSync(@config.ssl.cert).toString()
-    else
-      @app = express.createServer()
+ 
+    @app = express()
       
-    @io = require('socket.io').listen(@app, {'log level' : 0})
-    @io.enable('browser client minification')
-    @io.enable('browser client etag')
-    #@io.enable('browser client gzip')
     @app.set('view engine', 'ejs');
     @app.configure () =>
       @app.use(express.static(__dirname + '/public'));
@@ -37,16 +32,10 @@ class this.Appliance
       @app.use(require('connect-assets')());
       @app.set('view engine', 'jade');
       @app.set('view options', { layout: false });
-      @app.set('views', [path.join(__dirname, "../views")])
-      @app.register('ejs', require('ejs'));
-
+      @app.set('views', path.join(__dirname, "../views"))
+      @app.engine('ejs', require('ejs').renderFile);
       @app.use(@app.router);
-
-    @namespaces = new Namespaces(@io)
-    for k,v of @config
-      if k[0] == '/'
-        @namespaces.add(k, v)
-
+      
     @app.get '/api/:namespace', (req, res) =>
       res.contentType('js');
 
@@ -76,4 +65,28 @@ class this.Appliance
     @listen()
 
   listen: () ->
-    @app.listen(@config.port);
+    @config.listen ||= []
+    if @config.port
+      server_config = {port: @config.port}
+      if @config.ssl?
+        server_config.ssl = @config.ssl          
+      @config.listen.push(server_config)
+    
+    io_list = for c in @config.listen
+      if c.ssl?
+        opts =
+          key:  fs.readFileSync(c.ssl.key).toString()
+          cert: fs.readFileSync(c.ssl.cert).toString()
+        srv = https.createServer(opts, @app).listen(c.port)
+      else
+        srv = http.createServer(@app).listen(c.port)
+        
+      io = require('socket.io').listen(srv, {'log level' : 0})
+      io.enable('browser client minification')
+      io.enable('browser client etag')
+      
+    @namespaces = new Namespaces(io_list)
+    for k,v of @config
+      if k[0] == '/'
+        @namespaces.add(k, v)
+          
