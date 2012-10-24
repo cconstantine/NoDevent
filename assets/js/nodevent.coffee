@@ -26,7 +26,7 @@ class Room extends EventEmitter
     @_doJoin()
 
   leave: (fn) ->
-    @inRoom = false 
+    @inRoom = false
     if fn?
       @once('leave', fn)
       
@@ -46,13 +46,13 @@ class Room extends EventEmitter
 class this.NoDeventController extends EventEmitter
   constructor: () ->
     super()
-    @rooms = {};
+    @rooms = {}
       
   down: () ->
     if @socket?
       @socket.removeAllListeners()
 
-    for room,obj of @rooms
+    for room, obj of @rooms
       obj.removeAllListeners()
     @removeAllListeners()
 
@@ -68,10 +68,10 @@ class this.NoDeventController extends EventEmitter
       @emit('connect')
 
     @socket.on 'event', (data) =>
-      @room(data.room).emit(data.event, data.message);
+      @room(data.room).emit(data.event, data.message)
 
   connected: () ->
     @socket? && @socket.socket? && @socket.socket.connected
     
   room: (name) ->
-    @rooms[name] ?= new Room(name, @);
+    @rooms[name] ?= new Room(name, @)
