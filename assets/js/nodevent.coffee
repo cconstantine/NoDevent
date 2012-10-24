@@ -61,8 +61,22 @@ class this.NoDeventController extends EventEmitter
     @socket = socket
     @socket.on 'connect', =>
       @emit('connect')
+    @socket.on 'connecting', (transport_type) =>
+      @emit('connecting', transport_type)
     @socket.on 'disconnect', =>
       @emit('disconnect')
+    @socket.on 'connect_failed', =>
+      @emit('connect_failed')
+    @socket.on 'close', =>
+      @emit('close')
+    @socket.on 'error', =>
+      @emit('error')
+    @socket.on 'reconnect_failed', =>
+      @emit('reconnect_failed')
+    @socket.on 'reconnect', (transport_type, reconnectionAttempts) =>
+      @emit('reconnect', transport_type, reconnectionAttempts)
+    @socket.on 'reconnecting', (reconnectionDelay, reconnectionAttempts) =>
+      @emit('reconnecting', reconnectionDelay, reconnectionAttempts)
       
     if @connected()
       @emit('connect')
