@@ -26,7 +26,7 @@ class Room extends EventEmitter
     @_doJoin()
 
   leave: (fn) ->
-    @inRoom = false 
+    @inRoom = false
     if fn?
       @once('leave', fn)
       
@@ -46,13 +46,13 @@ class Room extends EventEmitter
 class this.NoDeventController extends EventEmitter
   constructor: () ->
     super()
-    @rooms = {};
+    @rooms = {}
       
   down: () ->
     if @socket?
       @socket.removeAllListeners()
 
-    for room,obj of @rooms
+    for room, obj of @rooms
       obj.removeAllListeners()
     @removeAllListeners()
 
@@ -61,17 +61,31 @@ class this.NoDeventController extends EventEmitter
     @socket = socket
     @socket.on 'connect', =>
       @emit('connect')
+    @socket.on 'connecting', (transport_type) =>
+      @emit('connecting', transport_type)
     @socket.on 'disconnect', =>
       @emit('disconnect')
+    @socket.on 'connect_failed', =>
+      @emit('connect_failed')
+    @socket.on 'close', =>
+      @emit('close')
+    @socket.on 'error', =>
+      @emit('error')
+    @socket.on 'reconnect_failed', =>
+      @emit('reconnect_failed')
+    @socket.on 'reconnect', (transport_type, reconnectionAttempts) =>
+      @emit('reconnect', transport_type, reconnectionAttempts)
+    @socket.on 'reconnecting', (reconnectionDelay, reconnectionAttempts) =>
+      @emit('reconnecting', reconnectionDelay, reconnectionAttempts)
       
     if @connected()
       @emit('connect')
 
     @socket.on 'event', (data) =>
-      @room(data.room).emit(data.event, data.message);
+      @room(data.room).emit(data.event, data.message)
 
   connected: () ->
     @socket? && @socket.socket? && @socket.socket.connected
     
   room: (name) ->
-    @rooms[name] ?= new Room(name, @);
+    @rooms[name] ?= new Room(name, @)
