@@ -2,15 +2,15 @@
 
 $ ->
   NoDevent.on 'connect', ->
-    $('#container').append("<div>connected</div>");
+    $('#container').append("<div>connected</div>")
 
   room = NoDevent.join 'theroom', (err) ->
     if !err?
-      $('#container').append("<div>joined: theroom</div>");
+      $('#container').append("<div>joined: theroom</div>")
     else
-      $('#container').append("<div>failed to joined: theroom (" + err + ")</div>");
+      $('#container').append("<div>failed to joined: theroom (" + err + ")</div>")
 
 
   room.on 'ping', (data) ->
-    $('#container').append("<div>ping: " + JSON.stringify(data) + "</div>");
+    $('#container').append("<div>ping: " + JSON.stringify(data) + "</div>")
 

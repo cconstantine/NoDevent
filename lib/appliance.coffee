@@ -1,10 +1,10 @@
 require('coffee-script')
 
 path = require('path')
-fs   = require('fs');
-express = require('express');
-Snockets = require('snockets');
-snocket = new Snockets();
+fs   = require('fs')
+express = require('express')
+Snockets = require('snockets')
+snocket = new Snockets()
 Namespaces = require('./namespaces').Namespaces
     
 https = require 'https'
@@ -17,27 +17,27 @@ class this.Appliance
       @config_filename = args[2]
     else if  fs.existsSync('/etc/nodevent.json')
       @config_filename = '/etc/nodevent.json'
-    else 
+    else
       @config_filename = path.join(__dirname, "../config.json")
     
     @config = JSON.parse(fs.readFileSync(@config_filename, "utf8"))
  
     @app = express()
       
-    @app.set('view engine', 'ejs');
+    @app.set('view engine', 'ejs')
     @app.configure () =>
-      @app.use(express.static(__dirname + '/public'));
-      @app.use(express.cookieParser());
-      @app.use(express.bodyParser());
-      @app.use(require('connect-assets')());
-      @app.set('view engine', 'jade');
-      @app.set('view options', { layout: false });
+      @app.use(express.static(__dirname + '/public'))
+      @app.use(express.cookieParser())
+      @app.use(express.bodyParser())
+      @app.use(require('connect-assets')())
+      @app.set('view engine', 'jade')
+      @app.set('view options', { layout: false })
       @app.set('views', path.join(__dirname, "../views"))
-      @app.engine('ejs', require('ejs').renderFile);
-      @app.use(@app.router);
+      @app.engine('ejs', require('ejs').renderFile)
+      @app.use(@app.router)
       
     @app.get '/api/:namespace', (req, res) =>
-      res.contentType('js');
+      res.contentType('js')
 
       host = if req.connection.encrypted then "https://" else "http://"
       host += req.headers.host
@@ -49,7 +49,7 @@ class this.Appliance
         (err, js) =>
           if (err)
             res.statusCode = 500
-            res.end("");
+            res.end("")
             throw err
           else if @namespaces.exists(namespace)
             res.render('nodevent.ejs',
@@ -59,7 +59,7 @@ class this.Appliance
                 host : host)
           else
             res.statusCode = 404
-            res.end("Namespace #{req.params.namespace} not found.");
+            res.end("Namespace #{req.params.namespace} not found.")
 
       )
     @listen()
@@ -69,7 +69,7 @@ class this.Appliance
     if @config.port
       server_config = {port: @config.port}
       if @config.ssl?
-        server_config.ssl = @config.ssl          
+        server_config.ssl = @config.ssl
       @config.listen.push(server_config)
     
     io_list = for c in @config.listen
