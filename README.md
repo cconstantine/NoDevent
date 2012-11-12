@@ -1,5 +1,5 @@
 [![build status](https://secure.travis-ci.org/cconstantine/NoDevent.png)](http://travis-ci.org/cconstantine/NoDevent)
-[![IRC](https://fighting-mongeese.jit.su/gifs/nodejitsu/chat.gif)](http://githubchat.us/chats/nodejitsu)
+[![IRC](https://fighting-mongeese.jit.su/gifs/fighting-mongeese/chat.gif)](http://githubchat.us/chats/fighting-mongeese)
 
 NoDevent
 =======
