@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 require('coffee-script')
 Appliance = require('./lib/appliance').Appliance
 var cm = new Appliance(process.argv)
