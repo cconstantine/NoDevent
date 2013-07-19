@@ -14,7 +14,6 @@ websocket_protected = () ->
   io.connect('http://localhost:9876/protected', {'force new connection': true})
 
 server = new Server
-spawn = require('child_process').spawn
 
 genKey = (room, ts, fn) ->
   toHash = room + ts + 'asdf'
